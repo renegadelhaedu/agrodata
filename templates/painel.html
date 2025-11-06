@@ -22,8 +22,19 @@
         </ul>
     </nav>
 
-    {{ graphJSON | safe }}
+    <main>
+        <section class="descricao">
+            <h2>Sobre o Projeto</h2>
+            <p>O sistema AgroData foi desenvolvido para monitorar, em tempo real, variáveis de solo e clima
+               que influenciam diretamente a qualidade e produtividade do coqueiro. Utilizando sensores IoT
+               conectados a microcontroladores ESP32 LoRa, os dados são enviados para um servidor Flask,
+               armazenados em banco de dados e apresentados em gráficos interativos.</p>
+        </section>
+    </main>
 
+    <footer>
+        <p>© 2025 - IFPB Campus Sousa | Projeto AgroData IoT 🌴</p>
+    </footer>
 
 </body>
 </html>

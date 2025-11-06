@@ -1,0 +1,94 @@
+/* ======= RESET ======= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* ======= BODY ======= */
+body {
+    background: #f7f9fb;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ======= HEADER ======= */
+header {
+    background: #036635;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: .5rem;
+}
+
+header p {
+    font-size: 1.1rem;
+    color: #d9f5e7;
+}
+
+/* ======= NAVIGATION ======= */
+nav {
+    background: #058a48;
+    padding: 0.8rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+nav ul li {
+    margin: 0.5rem 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: .5rem 1rem;
+    border-radius: 8px;
+    background: #049142;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    background: #02b252;
+}
+
+/* ======= MAIN CONTENT ======= */
+main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 900px;
+    margin: auto;
+}
+
+main h2 {
+    color: #036635;
+    margin-bottom: 1rem;
+}
+
+main p {
+    font-size: 1rem;
+    text-align: justify;
+}
+
+/* ======= FOOTER ======= */
+footer {
+    background: #036635;
+    color: #d9f5e7;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
