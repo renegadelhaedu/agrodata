@@ -92,3 +92,57 @@ footer {
     padding: 1rem;
     font-size: 0.9rem;
 }
+
+/* ======= SIDEBAR ======= */
+.menu-btn {
+    font-size: 20px;
+    padding: 10px 15px;
+    background-color: #036635;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 10px;
+    align-self: flex-start;
+}
+
+.menu-btn:hover {
+    background-color: #02b252;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #058a48;
+    overflow-x: hidden;
+    transition: 0.4s;
+    padding-top: 60px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+}
+
+.sidebar a {
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #f1f1f1;
+    display: block;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.sidebar a:hover {
+    background-color: #02b252;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 30px;
+    color: white;
+    text-decoration: none;
+}

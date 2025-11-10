@@ -1,6 +1,6 @@
 from dao.banco import db
 from datetime import datetime
-
+from zoneinfo import ZoneInfo
 
 class Leitura(db.Model):
     __tablename__ = "leituras"
@@ -9,12 +9,13 @@ class Leitura(db.Model):
     sensor_id = db.Column(db.String(50), nullable=False)
     tipo = db.Column(db.String(50), nullable=False)
     valor = db.Column(db.Float, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(ZoneInfo("America/Sao_Paulo")))
 
     def __init__(self, sensor_id, tipo, valor):
         self.sensor_id = sensor_id
         self.tipo = tipo
         self.valor = valor
+        self.timestamp = datetime.now(ZoneInfo("America/Sao_Paulo"))
 
     def to_dict(self):
         return {
