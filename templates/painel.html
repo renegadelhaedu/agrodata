@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>AgroData - Monitoramento IoT</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    <link rel="stylesheet" href="../static/css/painel.css">
     <script defer src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 </head>
 <body>
@@ -30,7 +30,7 @@
         <ul>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='condutividade') }}">⚡ Condutividade Elétrica</a></li>
+            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">Umidade do solo</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_solo') }}">🌱 pH do Solo</a></li>
         </ul>
