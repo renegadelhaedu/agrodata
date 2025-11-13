@@ -5,35 +5,39 @@
     <title>Correlação entre Sensores - AgroData</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao.css') }}">
 </head>
+
 <body>
+
+
     <header>
         <h1>📊 Análise de Correlação - AgroData</h1>
         <p>Selecione dois sensores e um intervalo de datas para gerar a correlação.</p>
     </header>
 
     <main>
+
+        <a href="/" class="btn-voltar">⬅️ Voltar ao Menu Principal</a>
+
         <form method="POST" class="form-corre">
             <div class="campo">
-                <label for="sensor1">Sensor 1:</label>
+                <label for="sensor1">Sensores Climáticos:</label>
                 <select name="sensor1" id="sensor1" required>
                     <option value="">-- Escolha --</option>
-                    <option value="temperatura_ar">Temperatura do Ar</option>
-                    <option value="umidade_ar">Umidade do Ar</option>
-                    <option value="umidade_solo">Umidade do Solo</option>
-                    <option value="rad_solar">Radiação Solar</option>
-                    <option value="medida_glicose">Medida de Glicose</option>
+                    <option value="temperatura_ar">🌡️ Temperatura do Ar</option>
+                    <option value="umidade_ar">💧 Umidade do Ar</option>
+                    <option value="umidade_solo">🌱 Umidade do Solo</option>
+                    <option value="rad_solar">☀️ Radiação Solar</option>
                 </select>
             </div>
 
             <div class="campo">
-                <label for="sensor2">Sensor 2:</label>
+                <label for="sensor2">Sensores Frutíferos:</label>
                 <select name="sensor2" id="sensor2" required>
                     <option value="">-- Escolha --</option>
-                    <option value="temperatura_ar">Temperatura do Ar</option>
-                    <option value="umidade_ar">Umidade do Ar</option>
-                    <option value="umidade_solo">Umidade do Solo</option>
-                    <option value="rad_solar">Radiação Solar</option>
-                    <option value="medida_glicose">Medida de Glicose</option>
+                    <option value="medida_glicose">🍈 Medida de Glicose</option>
+                    <option value="ph_suco">⚗️ pH do Suco</option>
+                    <option value="peso_fruto">⚖️ Peso do Fruto</option>
+                    <option value="diametro_fruto">📏 Diâmetro do Fruto</option>
                 </select>
             </div>
 
@@ -49,6 +53,12 @@
 
             <button type="submit" class="btn-gerar">Gerar Correlação</button>
         </form>
+
+        {% if aviso %}
+            <div class="resultado aviso">
+                <p>{{ aviso }}</p>
+            </div>
+        {% endif %}
 
         {% if correlacao %}
             <section class="resultado">
