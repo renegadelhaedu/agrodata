@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>AgroData - Monitoramento IoT</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+=======
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/grafico.css') }}">
+>>>>>>> main
 </head>
 <body>
 
@@ -16,11 +20,15 @@
         <ul>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='condutividade') }}">⚡ Condutividade Elétrica</a></li>
+            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">Umidade do solo</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_solo') }}">🌱 pH do Solo</a></li>
+            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_solo') }}">Medida de glicose</a></li>
         </ul>
     </nav>
+
+    {% if correlacao %}
+        <p>Correlação: {{correlacao}}</p><br>
+    {% endif %}
 
     {{ graphJSON | safe }}
 
