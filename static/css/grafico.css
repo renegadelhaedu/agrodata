@@ -57,3 +57,20 @@ p {
     background: white;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
+.btn-voltar {
+    display: inline-block;
+    margin-bottom: 25px;
+    background-color: #2e7d32;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-voltar:hover {
+    background-color: #43a047;
+    transform: translateY(-2px);
+}
