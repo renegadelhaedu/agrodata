@@ -25,22 +25,29 @@ def gerar_graf(leituras, tipo):
 
     return fig
 
-
 def grafico_correlacao(df1, df2):
-    df_all = pd.concat([df1, df2], ignore_index=True, axis=1)
 
-    df_all.columns = ['Sensor 1', 'Sensor 2']
+    min_len = min(len(df1), len(df2))
+    df1 = df1.head(min_len).reset_index(drop=True)
+    df2 = df2.head(min_len).reset_index(drop=True)
 
-    fig = px.line(df_all, x=df_all.index, y=df_all.columns,
-                  title='Comparação de Séries Temporais'
-                  )
+    df_all = pd.DataFrame({
+        'Sensor 1': df1['valor'],
+        'Sensor 2': df2['valor']
+    })
+
+    fig = px.line(
+        df_all,
+        y=df_all.columns,
+        title='Comparação de Séries Temporais'
+    )
 
     fig.update_layout(
         xaxis_title='Índice',
         yaxis_title='Valor',
         hovermode='x unified',
         template='plotly_white',
-        legend_title_text='Origem dos dados'
+        legend_title_text='Sensores'
     )
 
     return fig
