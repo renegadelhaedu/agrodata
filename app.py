@@ -44,5 +44,12 @@ def analisar():
 
     return render_template('grafico.html',correlacao = corre, graphJSON = fig.to_html())
 
+@app.route("/debug/leituras")
+def debug_leituras():
+    from dao.leitura_dao import LeituraDAO
+    leituras = LeituraDAO.listar_todas()
+    return "<br>".join([f"{l.tipo} - {l.getTimestamp()} - {l.getValor()}" for l in leituras])
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

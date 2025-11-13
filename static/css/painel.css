@@ -146,3 +146,42 @@ footer {
     color: white;
     text-decoration: none;
 }
+
+/* Submenu (sidebar dentro da sidebar) */
+.submenu {
+    position: relative;
+}
+
+.submenu-toggle {
+    cursor: pointer;
+    display: block;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.submenu-items {
+    display: none;
+    background-color: #2e7d32;
+    list-style: none;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.submenu-items li a {
+    display: block;
+    padding: 8px;
+    color: #e8f5e9;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.submenu-items li a:hover {
+    background-color: #66bb6a;
+}
+
+.submenu.open .submenu-items {
+    display: block;
+}
