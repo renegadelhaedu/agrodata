@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Correlação entre Frutos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_frutos.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>🍈 Correlação entre Sensores de Frutos</h1>
+    <p>Selecione dois sensores frutíferos.</p>
+</header>
+
+<main>
+
+    <a href="/" class="btn-voltar">⬅️ Voltar ao Menu</a>
+
+    <form method="POST" class="form-corre">
+
+        <div class="campo">
+            <label for="sensor1">Sensor 1:</label>
+            <select name="sensor1" required>
+                <option value="">-- Escolha --</option>
+                <option value="medida_glicose">🍬 Glicose</option>
+                <option value="ph_suco">⚗️ pH do Suco</option>
+                <option value="peso_fruto">⚖️ Peso do Fruto</option>
+                <option value="diametro_fruto">📏 Diâmetro do Fruto</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="sensor2">Sensor 2:</label>
+            <select name="sensor2" required>
+                <option value="">-- Escolha --</option>
+                <option value="medida_glicose">🍬 Glicose</option>
+                <option value="ph_suco">⚗️ pH do Suco</option>
+                <option value="peso_fruto">⚖️ Peso do Fruto</option>
+                <option value="diametro_fruto">📏 Diâmetro do Fruto</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label>Data Início:</label>
+            <input type="date" name="data_inicio" required>
+        </div>
+
+        <div class="campo">
+            <label>Data Fim:</label>
+            <input type="date" name="data_fim" required>
+        </div>
+
+        <button class="btn-gerar">Gerar Correlação</button>
+    </form>
+
+    {% if correlacao %}
+        <section class="resultado">
+            <h3>Correlação: {{ correlacao }}</h3>
+            <div class="grafico">{{ graphJSON | safe }}</div>
+        </section>
+    {% endif %}
+
+</main>
+</body>
+</html>

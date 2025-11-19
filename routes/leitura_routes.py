@@ -5,6 +5,11 @@ import pandas as pd
 
 leitura_bp = Blueprint("leitura_bp", __name__)
 
+
+# ============================================
+# ROTAS PRINCIPAIS DE LEITURAS
+# ============================================
+
 @leitura_bp.route("/", methods=["POST"])
 def receber_leitura():
     dados = request.get_json()
@@ -18,88 +23,138 @@ def receber_leitura():
     )
     return jsonify(leitura.to_dict()), 201
 
+
 @leitura_bp.route("/", methods=["GET"])
 def listar_leituras():
     leituras = LeituraDAO.listar_todas()
     return jsonify([l.to_dict() for l in leituras])
 
 
+# ============================================
+# EXIBIR GRÁFICOS INDIVIDUAIS
+# ============================================
+
 @leitura_bp.route("/grafico/<string:tipo>")
 def view_grafico(tipo):
     leituras = LeituraDAO.get_dados_sensor(tipo)
     graphJSON = grafico.gerar_graf(leituras, tipo)
+    return render_template("grafico.html", graphJSON=graphJSON.to_html())
 
-    return render_template('grafico.html', graphJSON=graphJSON.to_html())
+
+# ============================================
+# FUNÇÃO DE UTILIDADE PARA NORMALIZAR DADOS
+# ============================================
+
+def preparar_dataframe(leituras, data_inicio=None, data_fim=None):
+    df = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras])
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+
+    if data_inicio and data_fim:
+        data_inicio = pd.to_datetime(data_inicio)
+        data_fim = pd.to_datetime(data_fim) + pd.Timedelta(days=1)
+        df = df[(df["timestamp"] >= data_inicio) & (df["timestamp"] <= data_fim)]
+
+    return df
 
 
-@leitura_bp.route("/correlacao/<string:tipo1>/<string:tipo2>")
-def view_correlacao(tipo1, tipo2):
+# ============================================
+# 1️⃣ CORRELAÇÃO ENTRE SENSORES CLIMÁTICOS
+# ============================================
+
+@leitura_bp.route("/correlacao/clima", methods=["GET", "POST"])
+def corre_clima():
     from analise.analisador import gerar_correlacao_sensor
-
-    corre, df1, df2 = gerar_correlacao_sensor(tipo1, tipo2)
-    fig = grafico.grafico_correlacao(df1, df2)
-
-    return render_template('grafico.html', correlacao=corre, graphJSON=fig.to_html())
-
-@leitura_bp.route("/correlacao", methods=["GET", "POST"])
-def pagina_correlacao():
-    from analise.analisador import gerar_correlacao_sensor
-
-    leituras = LeituraDAO.listar_todas()
-    datas = [l.getTimestamp() for l in leituras if l.getTimestamp()]
-    data_min = min(datas).strftime("%Y-%m-%d") if datas else None
-    data_max = max(datas).strftime("%Y-%m-%d") if datas else None
 
     if request.method == "POST":
-        tipo1 = request.form.get("sensor1")
-        tipo2 = request.form.get("sensor2")
-        data_inicio = request.form.get("data_inicio")
-        data_fim = request.form.get("data_fim")
+        s1 = request.form.get("sensor1")
+        s2 = request.form.get("sensor2")
+        di = request.form.get("data_inicio")
+        df = request.form.get("data_fim")
 
-        leituras1 = LeituraDAO.get_dados_sensor(tipo1)
-        leituras2 = LeituraDAO.get_dados_sensor(tipo2)
+        df1 = preparar_dataframe(LeituraDAO.get_dados_sensor(s1), di, df)
+        df2 = preparar_dataframe(LeituraDAO.get_dados_sensor(s2), di, df)
 
-        df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
-        df2 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras2])
-
-        df1["timestamp"] = pd.to_datetime(df1["timestamp"])
-        df2["timestamp"] = pd.to_datetime(df2["timestamp"])
-
-        if data_inicio and data_fim:
-            data_inicio = pd.to_datetime(data_inicio)
-            data_fim = pd.to_datetime(data_fim) + pd.Timedelta(days=1)  # inclui fim do dia
-            df1 = df1[(df1["timestamp"] >= data_inicio) & (df1["timestamp"] <= data_fim)]
-            df2 = df2[(df2["timestamp"] >= data_inicio) & (df2["timestamp"] <= data_fim)]
-
-        # Se após o filtro estiver vazio, evita erro
         if df1.empty or df2.empty:
-            return render_template(
-                "correlacao.html",
-                aviso="⚠️ Nenhum dado encontrado no intervalo selecionado.",
-                data_min=data_min,
-                data_max=data_max,
-                tipo1=tipo1,
-                tipo2=tipo2
-            )
+            return render_template("correlacao_clima.html", aviso="⚠️ Sem dados no intervalo selecionado.")
 
-        # Calcular correlação e gráfico
-        corre, _, _ = gerar_correlacao_sensor(tipo1, tipo2)
+        correlacao, _, _ = gerar_correlacao_sensor(s1, s2)
         fig = grafico.grafico_correlacao(df1, df2)
-        graph_html = fig.to_html(full_html=False)
 
-        return render_template(
-            "correlacao.html",
-            graphJSON=graph_html,
-            correlacao=corre,
-            tipo1=tipo1,
-            tipo2=tipo2,
-            data_inicio=data_inicio.strftime("%Y-%m-%d"),
-            data_fim=(data_fim - pd.Timedelta(days=1)).strftime("%Y-%m-%d"),
-            data_min=data_min,
-            data_max=data_max
-        )
-    return render_template("correlacao.html", data_min=data_min, data_max=data_max)
+        return render_template("correlacao_clima.html",
+                               correlacao=correlacao,
+                               graphJSON=fig.to_html(),
+                               tipo1=s1, tipo2=s2)
 
+    return render_template("correlacao_clima.html")
+
+
+
+# ============================================
+# 2️⃣ CORRELAÇÃO CLIMA × FRUTO
+# ============================================
+
+@leitura_bp.route("/correlacao/clima-fruto", methods=["GET", "POST"])
+def corre_clima_fruto():
+    from analise.analisador import gerar_correlacao_sensor
+
+    if request.method == "POST":
+        clima = request.form.get("sensor1")
+        fruto = request.form.get("sensor2")
+        di = request.form.get("data_inicio")
+        df = request.form.get("data_fim")
+
+        df1 = preparar_dataframe(LeituraDAO.get_dados_sensor(clima), di, df)
+        df2 = preparar_dataframe(LeituraDAO.get_dados_sensor(fruto), di, df)
+
+        if df1.empty or df2.empty:
+            return render_template("correlacao_clima_fruto.html", aviso="⚠️ Sem dados no período.")
+
+        correlacao, _, _ = gerar_correlacao_sensor(clima, fruto)
+        fig = grafico.grafico_correlacao(df1, df2)
+
+        return render_template("correlacao_clima_fruto.html",
+                               correlacao=correlacao,
+                               graphJSON=fig.to_html(),
+                               tipo1=clima, tipo2=fruto)
+
+    return render_template("correlacao_clima_fruto.html")
+
+
+
+# ============================================
+# 3️⃣ CORRELAÇÃO ENTRE SENSORES DE FRUTOS
+# ============================================
+
+@leitura_bp.route("/correlacao/frutos", methods=["GET", "POST"])
+def corre_frutos():
+    from analise.analisador import gerar_correlacao_sensor
+
+    if request.method == "POST":
+        s1 = request.form.get("sensor1")
+        s2 = request.form.get("sensor2")
+        di = request.form.get("data_inicio")
+        df = request.form.get("data_fim")
+
+        df1 = preparar_dataframe(LeituraDAO.get_dados_sensor(s1), di, df)
+        df2 = preparar_dataframe(LeituraDAO.get_dados_sensor(s2), di, df)
+
+        if df1.empty or df2.empty:
+            return render_template("correlacao_frutos.html", aviso="⚠️ Sem dados suficientes.")
+
+        correlacao, _, _ = gerar_correlacao_sensor(s1, s2)
+        fig = grafico.grafico_correlacao(df1, df2)
+
+        return render_template("correlacao_frutos.html",
+                               correlacao=correlacao,
+                               graphJSON=fig.to_html(),
+                               tipo1=s1, tipo2=s2)
+
+    return render_template("correlacao_frutos.html")
+
+
+# ============================================
+# ROTA EXTRA – LISTAR TODAS AS DATAS
+# ============================================
 
 @leitura_bp.route("/datas")
 def listar_datas():

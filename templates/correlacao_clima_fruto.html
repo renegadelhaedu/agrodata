@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Correlação Clima × Frutos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_clima_fruto.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>🔗 Correlação entre Sensores de Clima × Frutos</h1>
+    <p>Selecione um sensor climático e um sensor frutífero.</p>
+</header>
+
+<main>
+
+    <a href="/" class="btn-voltar">⬅️ Voltar ao Menu</a>
+
+    <form method="POST" class="form-corre">
+
+        <div class="campo">
+            <label for="sensor1">Sensor de Clima:</label>
+            <select name="sensor1" required>
+                <option value="">-- Escolha --</option>
+                <option value="temperatura_ar">🌡️ Temperatura do Ar</option>
+                <option value="umidade_ar">💧 Umidade do Ar</option>
+                <option value="umidade_solo">🌱 Umidade do Solo</option>
+                <option value="rad_solar">☀️ Radiação Solar</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="sensor2">Sensor de Fruto:</label>
+            <select name="sensor2" required>
+                <option value="">-- Escolha --</option>
+                <option value="medida_glicose">🍬 Glicose</option>
+                <option value="ph_suco">⚗️ pH do Suco</option>
+                <option value="peso_fruto">⚖️ Peso do Fruto</option>
+                <option value="diametro_fruto">📏 Diâmetro do Fruto</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label>Data Início:</label>
+            <input type="date" name="data_inicio" required>
+        </div>
+
+        <div class="campo">
+            <label>Data Fim:</label>
+            <input type="date" name="data_fim" required>
+        </div>
+
+        <button class="btn-gerar">Gerar Correlação</button>
+    </form>
+
+    {% if correlacao %}
+        <section class="resultado">
+            <h3>Correlação: {{ correlacao }}</h3>
+            <div class="grafico">{{ graphJSON | safe }}</div>
+        </section>
+    {% endif %}
+
+</main>
+
+</body>
+</html>
