@@ -185,3 +185,54 @@ footer {
 .submenu.open .submenu-items {
     display: block;
 }
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .categoria {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #4caf50;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+.submenu {
+    list-style: none;
+}
+
+.submenu-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submenu-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submenu-list {
+    display: none;
+    flex-direction: column;
+    padding-left: 15px;
+}
+
+.submenu-list li a {
+    display: block;
+    padding: 8px 10px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.submenu-list li a:hover {
+    color: white;
+}
+
