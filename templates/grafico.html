@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>AgroData - Monitoramento IoT</title>
-
-<<<<<<< HEAD
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
-=======
     <link rel="stylesheet" href="{{ url_for('static', filename='css/grafico.css') }}">
->>>>>>> main
 </head>
 <body>
 
     <header>
-
         <h1>🌿 AgroData - Monitoramento IoT</h1>
         <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
     </header>
@@ -25,15 +19,23 @@
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">Umidade do solo</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_solo') }}">Medida de glicose</a></li>
+            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">Medida de glicose</a></li>
         </ul>
     </nav>
 
-    {% if correlacao %}
-        <p>Correlação: {{correlacao}}</p><br>
+    {% if aviso %}
+        <p class="aviso">{{ aviso }}</p>
     {% endif %}
 
-    {{ graphJSON | safe }}
+    {% if correlacao %}
+        <p>Correlação: {{ correlacao }}</p><br>
+    {% endif %}
+
+    {% if graphHTML %}
+        <div class="grafico">
+            {{ graphHTML | safe }}
+        </div>
+    {% endif %}
 
 </body>
 </html>

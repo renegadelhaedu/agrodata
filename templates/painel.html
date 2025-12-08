@@ -25,20 +25,55 @@
             SENSOR CLIMA
         ============================ -->
         <li class="categoria">🌤️ Sensores de Clima</li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">🌱 Umidade do Solo</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='temperatura_ar') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_ar') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">🌱 Umidade do Solo</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_solo') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='rad_solar') }}">🔗</a>
+        </li>
 
         <!-- ===========================
             SENSOR FRUTOS
         ============================ -->
         <li class="categoria">🍈 Sensores de Frutos</li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">🍬 Glicose</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_suco') }}">⚗️ pH do Suco</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='peso_fruto') }}">⚖️ Peso do Fruto</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='diametro_fruto') }}">📏 Diâmetro do Fruto</a></li>
 
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">🍬 Glicose</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='medida_glicose') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_suco') }}">⚗️ pH do Suco</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='ph_suco') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='peso_fruto') }}">⚖️ Peso do Fruto</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='peso_fruto') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='diametro_fruto') }}">📏 Diâmetro do Fruto</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='diametro_fruto') }}">🔗</a>
+        </li>
+
+        <!-- ===========================
+            ANÁLISES + SUBSIDEBAR
+        ============================ -->
         <!-- ===========================
             ANÁLISES + SUBSIDEBAR
         ============================ -->
@@ -46,14 +81,20 @@
 
         <li class="submenu-titulo">🔗 Correlação entre Sensores</li>
         <ul class="submenu">
-            <li><a href="{{ url_for('leitura_bp.corre_clima') }}">🌤️ Clima × Clima</a></li>
-            <li><a href="{{ url_for('leitura_bp.corre_frutos') }}">🍈 Frutos × Frutos</a></li>
-            <li><a href="{{ url_for('leitura_bp.corre_clima_fruto') }}">🔗 Clima × Frutos</a></li>
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima') }}">🌤️ Clima × Clima</a>
+            </li>
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='frutos') }}">🍈 Frutos × Frutos</a>
+            </li>
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima_fruto') }}">🔗 Clima × Frutos</a>
+            </li>
         </ul>
+
 
     </ul>
 </div>
-
 
 <main>
     <section class="descricao">
