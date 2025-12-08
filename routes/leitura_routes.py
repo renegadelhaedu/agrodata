@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
 from dao.leitura_dao import LeituraDAO
+from werkzeug.security import check_password_hash
+from modelo.coleta import Leitura
 from grafico import grafico
+from dao.banco import db
 import pandas as pd
 
 leitura_bp = Blueprint("leitura_bp", __name__)
@@ -176,17 +179,26 @@ def admin_page():
     return render_template("admin_panel.html", leituras=leituras_data)
 
 
-# Login admin (GET mostra form, POST valida)
+
 @leitura_bp.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "GET":
         return render_template("admin_login.html")
+
+    usuario = request.form.get("usuario")
     senha = request.form.get("senha")
-    if senha and senha == current_app.config.get("ADMIN_PASSWORD"):
+
+    user_hash = current_app.config.get("ADMIN_USER_HASH")
+    pass_hash = current_app.config.get("ADMIN_PASSWORD_HASH")
+
+    ok_user = check_password_hash(user_hash, usuario)
+    ok_pass = check_password_hash(pass_hash, senha)
+
+    if ok_user and ok_pass:
         session["is_admin"] = True
-        flash("Autenticado como admin.", "success")
         return redirect(url_for("leitura_bp.admin_page"))
-    flash("Senha inválida.", "danger")
+
+    flash("Usuário ou senha inválidos.", "danger")
     return redirect(url_for("leitura_bp.admin_login"))
 
 
@@ -198,50 +210,54 @@ def admin_logout():
     return redirect(url_for("home"))
 
 
-# Delete (POST)
-@leitura_bp.route("/admin/delete/<int:id>", methods=["POST"])
-def admin_delete(id):
-    if not session.get("is_admin"):
-        return redirect(url_for("leitura_bp.admin_login"))
-    success = LeituraDAO.deletar(id)
-    if success:
-        flash("Leitura removida.", "success")
-    else:
-        flash("Não foi possível remover (id não encontrado).", "danger")
-    return redirect(url_for("leitura_bp.admin_page"))
-
-
-# Edit (GET mostra form, POST aplica)
-@leitura_bp.route("/admin/edit/<int:id>", methods=["GET", "POST"])
-def admin_edit(id):
+@leitura_bp.route("/admin/delete", methods=["POST"])
+def admin_delete():
     if not session.get("is_admin"):
         return redirect(url_for("leitura_bp.admin_login"))
 
-    # buscar leitura via DAO
-    leituras = LeituraDAO.listar_todas()
-    leitura = next((l for l in leituras if l.id == id), None)
-    if not leitura:
-        flash("Leitura não encontrada.", "danger")
+    sensor = request.form.get("sensor")
+    data_inicio = request.form.get("data_inicio")
+    data_fim = request.form.get("data_fim")
+
+    if not sensor or not data_inicio or not data_fim:
+        flash("Preencha todos os campos!", "danger")
         return redirect(url_for("leitura_bp.admin_page"))
 
-    if request.method == "GET":
-        return render_template("admin_edit.html", leitura={
-            "id": leitura.id,
-            "sensor_id": leitura.sensor_id,
-            "tipo": leitura.tipo,
-            "valor": getattr(leitura, "valor", ""),
-            "timestamp": str(leitura.timestamp)
-        })
+    from datetime import datetime
+    try:
+        d1 = datetime.strptime(data_inicio, "%Y-%m-%d")
+        d2 = datetime.strptime(data_fim, "%Y-%m-%d")
+    except:
+        flash("Datas inválidas!", "danger")
+        return redirect(url_for("leitura_bp.admin_page"))
 
-    # POST -> aplica atualização
-    sensor_id = request.form.get("sensor_id")
-    tipo = request.form.get("tipo")
-    valor = request.form.get("valor")
-    timestamp = request.form.get("timestamp")
+    # Buscar leituras do tipo escolhido no intervalo solicitado
+    leituras = (
+        Leitura.query
+        .filter(Leitura.tipo == sensor)
+        .filter(Leitura.timestamp >= d1)
+        .filter(Leitura.timestamp <= d2)
+        .all()
+    )
 
-    updated = LeituraDAO.atualizar(id, sensor_id=sensor_id, tipo=tipo, valor=valor, timestamp=timestamp)
-    if updated:
-        flash("Leitura atualizada.", "success")
-    else:
-        flash("Falha ao atualizar.", "danger")
+    if not leituras:
+        flash("Nenhuma leitura encontrada nesse intervalo!", "warning")
+        return redirect(url_for("leitura_bp.admin_page"))
+
+    # Apagar tudo
+    for l in leituras:
+        db.session.delete(l)
+
+    db.session.commit()
+
+    flash(f"{len(leituras)} leituras do sensor '{sensor}' foram removidas.", "success")
     return redirect(url_for("leitura_bp.admin_page"))
+
+@leitura_bp.route("/admin/delete_by_date", methods=["GET"])
+def delete_by_date_page():
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+    return render_template("admin_delete_by_date_page.html")
+
+
+

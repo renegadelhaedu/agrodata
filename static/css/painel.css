@@ -236,3 +236,21 @@ footer {
     color: white;
 }
 
+.btn-admin {
+    font-size: 20px;
+    padding: 10px 15px;
+    background: #036635;
+    border: none;
+    cursor: pointer;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    margin: 10px;
+    align-self: flex-end;
+
+
+
+}
+.btn-admin:hover {
+    background: #000;
+}
