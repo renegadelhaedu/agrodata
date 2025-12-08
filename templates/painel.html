@@ -14,10 +14,17 @@
     <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
 </header>
 
-<button id="menu-btn" class="menu-btn">☰ Menu</button>
-<a class="btn-admin" href="{{ url_for('leitura_bp.admin_login') }}">
-    🛠 Página do Admin
-</a>
+<div class="top-bar">
+    <button id="menu-btn" class="menu-btn">☰ Menu</button>
+
+    <a class="btn-admin" href="{{ url_for('leitura_bp.admin_login') }}">
+        🛠 Página do Admin
+    </a>
+</div>
+
+
+
+
 <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="close-btn" id="close-btn">&times;</a>
 
