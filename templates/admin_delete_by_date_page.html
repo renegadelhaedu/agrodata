@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excluir Leituras</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+
+<header>
+    <h1>Excluir Leituras por Data</h1>
+</header>
+
+<div class="edit-container">
+
+<form method="POST" action="/admin/delete_by_date">
+
+    <label>Selecione o Sensor:</label>
+    <select name="sensor" required>
+        <option value="temperatura_ar">Temperatura do Ar</option>
+        <option value="umidade_ar">Umidade do Ar</option>
+        <option value="umidade_solo">Umidade do Solo</option>
+    </select>
+
+    <label>Data Início:</label>
+    <input type="date" name="data_inicio" required>
+
+    <label>Data Fim:</label>
+    <input type="date" name="data_fim" required>
+
+    <button type="submit" class="btn-excluir">Excluir Leituras</button>
+
+</form>
+
+<a class="btn-voltar" href="{{ url_for('leitura_bp.admin_page') }}">Voltar</a>
+
+</div>
+
+</body>
+</html>

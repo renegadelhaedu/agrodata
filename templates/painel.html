@@ -3,54 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <title>AgroData - Monitoramento IoT</title>
-    <link rel="stylesheet" href="../static/css/painel.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <script defer src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 </head>
+
 <body>
 
-    <header>
-        <h1>🌿 AgroData - Monitoramento IoT</h1>
-        <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
-    </header>
+<header>
+    <h1>🌿 AgroData - Monitoramento IoT</h1>
+    <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
+</header>
 
+<div class="top-bar">
     <button id="menu-btn" class="menu-btn">☰ Menu</button>
 
-    <div id="sidebar" class="sidebar">
-        <a href="javascript:void(0)" class="close-btn" id="close-btn">&times;</a>
-        <ul>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='condutividade') }}">⚡ Condutividade Elétrica</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">Medida de glicose</a></li>
-            <<li><a href="{{ url_for('leitura_bp.pagina_correlacao') }}">📊 Análise de Correlação</a></li>
+    <a class="btn-admin" href="{{ url_for('leitura_bp.admin_login') }}">
+        🛠 Página do Admin
+    </a>
+</div>
 
+
+
+
+<div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" id="close-btn">&times;</a>
+
+    <ul>
+
+        <!-- ===========================
+            SENSOR CLIMA
+        ============================ -->
+        <li class="categoria">🌤️ Sensores de Clima</li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='temperatura_ar') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_ar') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">🌱 Umidade do Solo</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_solo') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='rad_solar') }}">🔗</a>
+        </li>
+
+        <!-- ===========================
+            SENSOR FRUTOS
+        ============================ -->
+        <li class="categoria">🍈 Sensores de Frutos</li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">🍬 Glicose</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='medida_glicose') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_suco') }}">⚗️ pH do Suco</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='ph_suco') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='peso_fruto') }}">⚖️ Peso do Fruto</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='peso_fruto') }}">🔗</a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='diametro_fruto') }}">📏 Diâmetro do Fruto</a>
+            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='diametro_fruto') }}">🔗</a>
+        </li>
+
+        <!-- ===========================
+            ANÁLISES + SUBSIDEBAR
+        ============================ -->
+        <!-- ===========================
+            ANÁLISES + SUBSIDEBAR
+        ============================ -->
+        <li class="categoria">📊 Análises</li>
+
+        <li class="submenu-titulo">🔗 Correlação entre Sensores</li>
+        <ul class="submenu">
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima') }}">🌤️ Clima × Clima</a>
+            </li>
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='frutos') }}">🍈 Frutos × Frutos</a>
+            </li>
+            <li>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima_fruto') }}">🔗 Clima × Frutos</a>
+            </li>
         </ul>
-    </div>
 
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">Umidade do solo</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">Medida de glicose</a></li>
-        </ul>
-    </nav>
 
-    <main>
-        <section class="descricao">
-            <h2>Sobre o Projeto</h2>
-            <p>O sistema AgroData foi desenvolvido para monitorar, em tempo real, variáveis de solo e clima
-               que influenciam diretamente a qualidade e produtividade do coqueiro. Utilizando sensores IoT
-               conectados a microcontroladores ESP32 LoRa, os dados são enviados para um servidor Flask,
-               armazenados em banco de dados e apresentados em gráficos interativos.</p>
-        </section>
-    </main>
+    </ul>
+</div>
 
-    <footer>
-        <p>© 2025 - IFPB Campus Sousa | Projeto AgroData IoT 🌴</p>
-    </footer>
+<main>
+    <section class="descricao">
+        <h2>Sobre o Projeto</h2>
+        <p>
+            O sistema AgroData foi desenvolvido para monitorar, em tempo real, variáveis de solo e clima
+            que influenciam diretamente a qualidade e produtividade do coqueiro.
+            Sensores IoT enviam dados para um servidor Flask, onde são processados
+            e apresentados em gráficos analíticos.
+        </p>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 - IFPB Campus Sousa | Projeto AgroData IoT 🌴</p>
+</footer>
 
 </body>
 </html>

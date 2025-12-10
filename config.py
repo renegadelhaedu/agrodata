@@ -1,6 +1,10 @@
+from werkzeug.security import generate_password_hash
 import os
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///iot_data.db'
+    SECRET_KEY = "agrodata2025"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///iot_data.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.environ.get("SECRET_KEY", "Sh24G4lKJ4@")
+
+    ADMIN_USER_HASH = generate_password_hash("admin")
+    ADMIN_PASSWORD_HASH = generate_password_hash("1234")

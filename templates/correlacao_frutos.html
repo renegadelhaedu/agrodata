@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Correlação - Frutos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_frutos.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🍈 Correlação — Frutos</h1>
+    <p>Escolha dois sensores de frutos e o intervalo de datas.</p>
+</header>
+
+<main>
+    <a href="/" class="btn-voltar">⬅️ Voltar ao Menu</a>
+
+    <form action="{{ url_for('leitura_bp.pagina_correlacao') }}" method="POST" class="form-corre">
+        <input type="hidden" name="mode" value="frutos">
+
+        <div class="campo">
+            <label for="sensor1">Sensor 1:</label>
+            <select name="sensor1" id="sensor1" required>
+                <option value="">-- Escolha --</option>
+                <option value="medida_glicose" {% if tipo1 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
+                <option value="ph_suco" {% if tipo1 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
+                <option value="peso_fruto" {% if tipo1 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
+                <option value="diametro_fruto" {% if tipo1 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="sensor2">Sensor 2:</label>
+            <select name="sensor2" id="sensor2" required>
+                <option value="">-- Escolha --</option>
+                <option value="medida_glicose" {% if tipo2 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
+                <option value="ph_suco" {% if tipo2 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
+                <option value="peso_fruto" {% if tipo2 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
+                <option value="diametro_fruto" {% if tipo2 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="data_inicio">Data Início:</label>
+            <input type="date" name="data_inicio" id="data_inicio"
+                   min="{{ data_min }}" max="{{ data_max }}"
+                   value="{{ (data_inicio if data_inicio is defined) }}">
+        </div>
+
+        <div class="campo">
+            <label for="data_fim">Data Fim:</label>
+            <input type="date" name="data_fim" id="data_fim"
+                   min="{{ data_min }}" max="{{ data_max }}"
+                   value="{{ (data_fim if data_fim is defined) }}">
+        </div>
+
+        <button type="submit" class="btn-gerar">Gerar Correlação</button>
+    </form>
+
+    {% if aviso %}
+        <p class="aviso">{{ aviso }}</p>
+    {% endif %}
+
+    {% if correlacao is defined %}
+        <section class="resultado">
+            <h3>Correlação: {{ correlacao }}</h3>
+            {% if graphHTML %}
+                <div class="grafico">{{ graphHTML | safe }}</div>
+            {% endif %}
+        </section>
+    {% endif %}
+
+</main>
+
+</body>
+</html>
