@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login_cadastro_user.css') }}">
+</head>
+<body>
+
+<header>
+<h1>Login</h1>
+</header>
+
+<main>
+
+    <div class="top-bar">
+    <h2>Entrar</h2>
+    <a href="{{ url_for('leitura_bp.admin_login') }}" class="btn-admin">
+        Login Admin
+    </a>
+</div>
+
+<form method="POST">
+<label>Email:</label>
+<input type="email" name="email" required>
+
+<label>Senha:</label>
+<input type="password" name="senha" required>
+
+<button type="submit">Entrar</button>
+</form>
+
+<a href="{{ url_for('user_bp.cadastro') }}">
+    Criar conta
+</a>
+
+
+</main>
+
+</body>
+</html>

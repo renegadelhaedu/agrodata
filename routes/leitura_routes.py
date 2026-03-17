@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
-from dao.leitura_dao import LeituraDAO
+from dao.modelsDAO import LeituraDAO
 from werkzeug.security import check_password_hash
 from modelo.coleta import Leitura
 from grafico import grafico
@@ -8,15 +8,14 @@ import pandas as pd
 
 leitura_bp = Blueprint("leitura_bp", __name__)
 
-# ===========================
-# API LEITURAS BÁSICA
-# ===========================
-@leitura_bp.route("/", methods=["POST"])
+
+@leitura_bp.route("/api/leituras", methods=["POST"])
 def receber_leitura():
     dados = request.get_json()
     if not dados or not all(k in dados for k in ("sensor_id", "tipo", "valor")):
+        print('NAO - ', dados)
         return jsonify({"erro": "JSON inválido ou incompleto"}), 400
-
+    print('SIM - ', dados)
     leitura = LeituraDAO.salvar(
         sensor_id=dados["sensor_id"],
         tipo=dados["tipo"],
@@ -25,8 +24,16 @@ def receber_leitura():
     return jsonify(leitura.to_dict()), 201
 
 
+
+@leitura_bp.route("/api/leituras", methods=["GET"])
+def listar_leituras_api():
+    leituras = LeituraDAO.listar_todas()
+    return jsonify([l.to_dict() for l in leituras])
+
+
+
 @leitura_bp.route("/", methods=["GET"])
-def listar_leituras():
+def listar_leituras_view():
     leituras = LeituraDAO.listar_todas()
     return jsonify([l.to_dict() for l in leituras])
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login_cadastro_user.css') }}">
+</head>
+<body>
+
+<header>
+<h1>Cadastro</h1>
+</header>
+
+<main>
+<h2>Criar Conta</h2>
+
+<form method="POST">
+<label>Nome:</label>
+<input type="text" name="nome" required>
+
+<label>Email:</label>
+<input type="email" name="email" required>
+
+<label>Senha:</label>
+<input type="password" name="senha" required>
+
+<button type="submit">Cadastrar</button>
+</form>
+
+    <a href="{{ url_for('user_bp.login') }}">
+        Login
+    </a>
+</main>
+
+</body>
+</html>
