@@ -5,6 +5,7 @@ from modelo.coleta import Leitura
 from grafico import grafico
 from dao.banco import db
 import pandas as pd
+from dao.modelsDAO import UsuarioDAO
 
 leitura_bp = Blueprint("leitura_bp", __name__)
 
@@ -260,11 +261,72 @@ def admin_delete():
     flash(f"{len(leituras)} leituras do sensor '{sensor}' foram removidas.", "success")
     return redirect(url_for("leitura_bp.admin_page"))
 
+@leitura_bp.route("/admin/delete/<int:id>", methods=["POST"])
+def admin_delete_by_id(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    leitura = Leitura.query.get(id)
+
+    if not leitura:
+        flash("Leitura não encontrada", "danger")
+        return redirect(url_for("leitura_bp.admin_page"))
+
+    db.session.delete(leitura)
+    db.session.commit()
+
+    flash("Leitura excluída", "success")
+    return redirect(url_for("leitura_bp.admin_page"))
+
 @leitura_bp.route("/admin/delete_by_date", methods=["GET"])
 def delete_by_date_page():
     if not session.get("is_admin"):
         return redirect(url_for("leitura_bp.admin_login"))
     return render_template("admin_delete_by_date_page.html")
 
+
+
+
+@leitura_bp.route("/admin/usuarios/delete/<int:id>", methods=["POST"])
+def admin_delete_usuario(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    UsuarioDAO.deletar(id)
+    return redirect(url_for("leitura_bp.admin_usuarios"))
+
+
+@leitura_bp.route("/admin/usuarios")
+def admin_usuarios():
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    usuarios = UsuarioDAO.listar_aprovados()  # 🔥 aqui
+    return render_template("admin_usuarios.html", usuarios=usuarios)
+
+
+@leitura_bp.route("/admin/usuarios/pendentes")
+def usuarios_pendentes():
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    usuarios = UsuarioDAO.listar_pendentes()
+    return render_template("admin_pendentes.html", usuarios=usuarios)
+
+@leitura_bp.route("/admin/usuarios/aprovar/<int:id>")
+def aprovar_usuario(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    UsuarioDAO.aprovar_usuario(id)
+    return redirect(url_for("leitura_bp.usuarios_pendentes"))
+
+@leitura_bp.route("/admin/usuarios/recusar/<int:id>")
+def recusar_usuario(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("leitura_bp.admin_login"))
+
+    UsuarioDAO.deletar(id)
+    return redirect(url_for("leitura_bp.usuarios_pendentes"))
 
 

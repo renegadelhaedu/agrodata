@@ -8,7 +8,6 @@ from analise.analisador import *
 import time
 import utils
 import threading
-
 from routes.usuario_bp import user_bp
 
 app = Flask(__name__)
@@ -20,7 +19,8 @@ with app.app_context():
     db.create_all()
 
 app.register_blueprint(leitura_bp, url_prefix="/leituras")
-app.register_blueprint(user_bp, url_prefix="/nome")
+app.register_blueprint(user_bp)
+
 
 def preencher():
     valor = 27

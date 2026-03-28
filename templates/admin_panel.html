@@ -14,7 +14,9 @@
     <ul>
         <li><a href="/">Página Inicial</a></li>
 
-        <!-- O BOTÃO QUE VOCÊ PEDIU -->
+        <li><a href="{{ url_for('leitura_bp.admin_usuarios') }}">Usuários Ativos</a></li>
+        <li><a href="{{ url_for('leitura_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
+
         <li><a href="{{ url_for('leitura_bp.delete_by_date_page') }}">Excluir por Data</a></li>
 
         <li><a href="{{ url_for('leitura_bp.admin_logout') }}">Sair</a></li>
@@ -22,8 +24,6 @@
 </nav>
 
 <p>Gerenciamento de Leituras</p>
-
-
 
 <table>
     <tr>
@@ -44,13 +44,13 @@
         <td>{{ l.timestamp }}</td>
 
         <td>
-            <a class="btn-delete"
-               href="{{ url_for('leitura_bp.admin_delete', id=l.id) }}"
-               onclick="return confirm('Tem certeza que deseja apagar esta leitura?')">
-               Excluir
-            </a>
+            <form action="{{ url_for('leitura_bp.admin_delete_by_id', id=l.id) }}" method="POST">
+                <button type="submit" class="btn-delete"
+                    onclick="return confirm('Tem certeza que deseja apagar esta leitura?')">
+                    Excluir
+                </button>
+            </form>
         </td>
-
     </tr>
     {% endfor %}
 </table>

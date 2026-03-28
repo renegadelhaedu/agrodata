@@ -196,3 +196,20 @@ footer {
     padding: 0 15px;
     width: 100%;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #036635;
+    color: white;
+}

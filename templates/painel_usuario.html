@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Painel do Usuário</title>
+    <link rel="stylesheet" href="/static/css/painel.css">
+</head>
+<body>
+
+<header>
+    <h1>Painel do Usuário</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/nome/logout">Sair</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<h2>Dados dos Sensores e Frutos</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Sensor</th>
+        <th>Tipo</th>
+        <th>Valor</th>
+        <th>Data</th>
+    </tr>
+
+    {% for l in leituras %}
+    <tr>
+        <td>{{ l.id }}</td>
+        <td>{{ l.sensor_id }}</td>
+        <td>{{ l.tipo }}</td>
+        <td>{{ l.valor }}</td>
+        <td>{{ l.timestamp }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</main>
+
+</body>
+</html>

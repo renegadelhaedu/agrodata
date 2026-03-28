@@ -1,5 +1,6 @@
 from dao.banco import db
 from modelo.coleta import Leitura
+from dao.modelsDB import *
 from datetime import datetime
 
 class LeituraDAO:
@@ -95,5 +96,50 @@ class UsuarioDAO:
         if not user:
             return False
         user.aprovado = 1
+        db.session.commit()
+        return True
+
+    @staticmethod
+    def listar_pendentes():
+        return Usuario.query.filter_by(aprovado=False).all()
+
+    @staticmethod
+    def listar_aprovados():
+        return Usuario.query.filter_by(aprovado=True).all()
+
+    @staticmethod
+    def deletar(id_usuario):
+        user = Usuario.query.get(id_usuario)
+        if not user:
+            return False
+        db.session.delete(user)
+        db.session.commit()
+        return True
+
+class ColetaFrutoDAO:
+
+    @staticmethod
+    def criar(usuario_id, peso, diametro, ph, glicose):
+        coleta = ColetaFruto(
+            usuario_id=usuario_id,
+            peso=peso,
+            diametro=diametro,
+            ph=ph,
+            glicose=glicose
+        )
+        db.session.add(coleta)
+        db.session.commit()
+        return coleta
+
+    @staticmethod
+    def listar():
+        return ColetaFruto.query.all()
+
+    @staticmethod
+    def deletar(id):
+        c = ColetaFruto.query.get(id)
+        if not c:
+            return False
+        db.session.delete(c)
         db.session.commit()
         return True
