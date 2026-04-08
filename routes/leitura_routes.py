@@ -167,7 +167,7 @@ def corre_frutos_page():
 @leitura_bp.route("/correlacao/user", methods=["GET", "POST"])
 def correlacao_usuario():
 
-    from modelo.leitura import ColetaFruto
+    from dao.modelsDB import ColetaFruto
     from analise.analisador import gerar_correlacao_sensor
     import pandas as pd
 

@@ -49,7 +49,7 @@ def analisar():
 
 @app.route("/debug/leituras")
 def debug_leituras():
-    from dao.modelsDAO import LeituraDAO
+    from dao.leituraDAO import LeituraDAO
     leituras = LeituraDAO.listar_todas()
     return "<br>".join([f"{l.tipo} - {l.getTimestamp()} - {l.getValor()}" for l in leituras])
 
