@@ -1,11 +1,11 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
-from dao.modelsDAO import LeituraDAO
+from dao.leituraDAO import LeituraDAO
 from werkzeug.security import check_password_hash
 from modelo.leitura import Leitura
 from grafico import grafico
 from dao.banco import db
 import pandas as pd
-from dao.modelsDAO import UsuarioDAO
+from dao.usuarioDAO import UsuarioDAO
 
 leitura_bp = Blueprint("leitura_bp", __name__)
 
