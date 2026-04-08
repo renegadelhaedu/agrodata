@@ -61,9 +61,21 @@ def cadastro():
 
     return render_template("cadastro.html")
 
-# =========================
-# LOGIN
-# =========================
+@user_bp.route("/user", methods=["GET"])
+def user_list():
+    if not session.get("usuario_logado"):
+        return redirect(url_for("user_bp.login"))
+    leituras = LeituraDAO.listar_todas()
+    # transforma em dicionários simples para o template
+    leituras_data = [{
+        "id": l.id,
+        "sensor_id": l.sensor_id,
+        "tipo": l.tipo,
+        "valor": getattr(l, "valor", None),
+        "timestamp": str(l.timestamp)
+    } for l in leituras]
+    return render_template("user_list.html", leituras=leituras_data)
+
 
 
 
@@ -71,6 +83,45 @@ def cadastro():
 def logout():
     session.clear()
     return redirect("/")
+
+@user_bp.route("/coleta", methods=["GET", "POST"])
+def cadastrar_coleta():
+
+    if not session.get("usuario_logado"):
+        return redirect(url_for("user_bp.login"))
+
+    if request.method == "POST":
+        try:
+            frutose = float(request.form["frutose"])
+            peso = float(request.form["peso"])
+            tamanho = float(request.form["tamanho"])
+            acidez = float(request.form["acidez"])
+        except:
+            flash("Dados inválidos")
+            return redirect(url_for("user_bp.cadastrar_coleta"))
+
+        ColetaFrutoDAO.criar(
+            usuario_id=session["user_id"],
+            frutose=frutose,
+            peso=peso,
+            tamanho=tamanho,
+            acidez=acidez
+        )
+
+        flash("Coleta registrada com sucesso")
+        return redirect(url_for("user_bp.listar_coletas"))
+
+    return render_template("coleta_form.html")
+
+@user_bp.route("/coletas")
+def listar_coletas():
+
+    if not session.get("usuario_logado"):
+        return redirect(url_for("user_bp.login"))
+
+    coletas = ColetaFrutoDAO.listar_por_usuario(session["user_id"])
+
+    return render_template("coletas_usuario.html", coletas=coletas)
 
 
 

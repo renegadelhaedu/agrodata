@@ -2,70 +2,78 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Correlação - Frutos</title>
+    <title>Correlação Personalizada</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_frutos.css') }}">
 </head>
 <body>
 
 <header>
-    <h1>🍈 Correlação — Frutos</h1>
-    <p>Escolha dois sensores de frutos e o intervalo de datas.</p>
+    <h1>📊 Correlação Personalizada</h1>
+    <p>Relacione um sensor com seus dados de fruta</p>
 </header>
 
 <main>
-    <a href="/painel" class="btn-voltar">⬅️ Voltar ao Menu</a>
 
-    <form action="{{ url_for('leitura_bp.pagina_correlacao') }}" method="POST" class="form-corre">
-        <input type="hidden" name="mode" value="frutos">
+    <a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">
+        ⬅️ Voltar ao Painel
+    </a>
 
+    <!-- 🔥 FORM CORRIGIDO -->
+    <form action="{{ url_for('leitura_bp.correlacao_usuario') }}" method="POST" class="form-corre">
+
+        <!-- SENSOR -->
         <div class="campo">
-            <label for="sensor1">Sensor 1:</label>
-            <select name="sensor1" id="sensor1" required>
+            <label>Sensor:</label>
+            <select name="sensor" required>
                 <option value="">-- Escolha --</option>
-                <option value="medida_glicose" {% if tipo1 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
-                <option value="ph_suco" {% if tipo1 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
-                <option value="peso_fruto" {% if tipo1 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
-                <option value="diametro_fruto" {% if tipo1 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+                <option value="temperatura_ar" {{ 'selected' if request.form.get('sensor') == 'temperatura_ar' else '' }}>Temperatura do Ar</option>
+                <option value="umidade_ar" {{ 'selected' if request.form.get('sensor') == 'umidade_ar' else '' }}>Umidade do Ar</option>
+                <option value="umidade_solo" {{ 'selected' if request.form.get('sensor') == 'umidade_solo' else '' }}>Umidade do Solo</option>
+                <option value="rad_solar" {{ 'selected' if request.form.get('sensor') == 'rad_solar' else '' }}>Radiação Solar</option>
             </select>
         </div>
 
+        <!-- ATRIBUTO -->
         <div class="campo">
-            <label for="sensor2">Sensor 2:</label>
-            <select name="sensor2" id="sensor2" required>
+            <label>Atributo da fruta:</label>
+            <select name="atributo" required>
                 <option value="">-- Escolha --</option>
-                <option value="medida_glicose" {% if tipo2 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
-                <option value="ph_suco" {% if tipo2 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
-                <option value="peso_fruto" {% if tipo2 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
-                <option value="diametro_fruto" {% if tipo2 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+                <option value="frutose" {{ 'selected' if request.form.get('atributo') == 'frutose' else '' }}>Frutose</option>
+                <option value="peso" {{ 'selected' if request.form.get('atributo') == 'peso' else '' }}>Peso</option>
+                <option value="tamanho" {{ 'selected' if request.form.get('atributo') == 'tamanho' else '' }}>Tamanho</option>
+                <option value="acidez" {{ 'selected' if request.form.get('atributo') == 'acidez' else '' }}>Acidez</option>
             </select>
         </div>
 
+        <!-- DATAS -->
         <div class="campo">
-            <label for="data_inicio">Data Início:</label>
-            <input type="date" name="data_inicio" id="data_inicio"
-                   min="{{ data_min }}" max="{{ data_max }}"
-                   value="{{ (data_inicio if data_inicio is defined) }}">
+            <label>Data início:</label>
+            <input type="date" name="data_inicio" value="{{ request.form.get('data_inicio', '') }}">
         </div>
 
         <div class="campo">
-            <label for="data_fim">Data Fim:</label>
-            <input type="date" name="data_fim" id="data_fim"
-                   min="{{ data_min }}" max="{{ data_max }}"
-                   value="{{ (data_fim if data_fim is defined) }}">
+            <label>Data fim:</label>
+            <input type="date" name="data_fim" value="{{ request.form.get('data_fim', '') }}">
         </div>
 
         <button type="submit" class="btn-gerar">Gerar Correlação</button>
+
     </form>
 
+    <!-- AVISOS -->
     {% if aviso %}
         <p class="aviso">{{ aviso }}</p>
     {% endif %}
 
-    {% if correlacao is defined %}
+    <!-- RESULTADO -->
+    {% if correlacao %}
         <section class="resultado">
             <h3>Correlação: {{ correlacao }}</h3>
+
             {% if graphHTML %}
-                <div class="grafico">{{ graphHTML | safe }}</div>
+                <div class="grafico">
+                    {{ graphHTML | safe }}
+                </div>
             {% endif %}
         </section>
     {% endif %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
 from dao.modelsDAO import LeituraDAO
 from werkzeug.security import check_password_hash
-from modelo.coleta import Leitura
+from modelo.leitura import Leitura
 from grafico import grafico
 from dao.banco import db
 import pandas as pd
@@ -164,9 +164,133 @@ def corre_frutos_page():
     return render_template("correlacao_frutos.html")
 
 
-@leitura_bp.route("/correlacao/clima_fruto", methods=["GET"])
-def corre_clima_fruto_page():
-    return render_template("correlacao_clima_fruto.html")
+@leitura_bp.route("/correlacao/user", methods=["GET", "POST"])
+def correlacao_usuario():
+
+    from modelo.leitura import ColetaFruto
+    from analise.analisador import gerar_correlacao_sensor
+    import pandas as pd
+
+    # 🔒 segurança
+    if not session.get("usuario_logado"):
+        return redirect(url_for("user_bp.login"))
+
+    if request.method == "GET":
+        return render_template("correlacao_user.html")
+
+    # =========================
+    # PEGAR DADOS DO FORM
+    # =========================
+    sensor = request.form.get("sensor")
+    atributo = request.form.get("atributo")
+    data_inicio = request.form.get("data_inicio")
+    data_fim = request.form.get("data_fim")
+
+    if not sensor or not atributo:
+        return render_template("correlacao_user.html", aviso="Preencha todos os campos")
+
+    # =========================
+    # BUSCAR DADOS DO USUÁRIO
+    # =========================
+    coletas = ColetaFruto.query.filter_by(usuario_id=session["user_id"]).all()
+
+    if not coletas:
+        return render_template("correlacao_user.html", aviso="Você não possui coletas")
+
+    # =========================
+    # DATAFRAME FRUTO
+    # =========================
+    try:
+        df_fruto = pd.DataFrame([
+            {
+                "valor_fruto": getattr(c, atributo),
+                "timestamp": c.timestamp
+            }
+            for c in coletas if getattr(c, atributo) is not None
+        ])
+    except AttributeError:
+        return render_template("correlacao_user.html", aviso="Atributo inválido")
+
+    if df_fruto.empty:
+        return render_template("correlacao_user.html", aviso="Sem dados válidos de fruto")
+
+    df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
+
+    # =========================
+    # BUSCAR SENSOR
+    # =========================
+    leituras = LeituraDAO.get_dados_sensor(sensor)
+
+    if not leituras:
+        return render_template("correlacao_user.html", aviso="Sensor sem dados")
+
+    df_sensor = pd.DataFrame([
+        {
+            "valor_sensor": l.getValor(),
+            "timestamp": l.getTimestamp()
+        }
+        for l in leituras if l.getTimestamp() is not None
+    ])
+
+    if df_sensor.empty:
+        return render_template("correlacao_user.html", aviso="Sem dados do sensor")
+
+    df_sensor["timestamp"] = pd.to_datetime(df_sensor["timestamp"])
+
+    # =========================
+    # FILTRO POR DATA
+    # =========================
+    if data_inicio and data_fim:
+        try:
+            d1 = pd.to_datetime(data_inicio)
+            d2 = pd.to_datetime(data_fim)
+
+            df_fruto = df_fruto[(df_fruto["timestamp"] >= d1) & (df_fruto["timestamp"] <= d2)]
+            df_sensor = df_sensor[(df_sensor["timestamp"] >= d1) & (df_sensor["timestamp"] <= d2)]
+
+        except Exception:
+            return render_template("correlacao_user.html", aviso="Datas inválidas")
+
+    # =========================
+    # 🔥 ALINHAMENTO TEMPORAL (CRÍTICO)
+    # =========================
+    df_fruto = df_fruto.sort_values("timestamp")
+    df_sensor = df_sensor.sort_values("timestamp")
+
+    df = pd.merge_asof(
+        df_fruto,
+        df_sensor,
+        on="timestamp",
+        direction="nearest"
+    )
+
+    # =========================
+    # VALIDAÇÃO
+    # =========================
+    if len(df) < 5:
+        return render_template("correlacao_user.html", aviso="Poucos dados para correlação")
+
+    # =========================
+    # CÁLCULO
+    # =========================
+    correlacao = df["valor_fruto"].corr(df["valor_sensor"])
+
+    # =========================
+    # GRÁFICO
+    # =========================
+    from grafico import grafico
+    fig = grafico.grafico_correlacao(
+        df[["valor_fruto", "timestamp"]],
+        df[["valor_sensor", "timestamp"]]
+    )
+
+    graph_html = fig.to_html(full_html=False)
+
+    return render_template(
+        "correlacao_user.html",
+        correlacao=round(correlacao, 4),
+        graphHTML=graph_html
+    )
 
 
 

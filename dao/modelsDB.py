@@ -12,15 +12,12 @@ class Usuario(db.Model):
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
 class ColetaFruto(db.Model):
-    __tablename__ = "coletas_frutos"
-
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer)
 
-    usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"))
-
+    frutose = db.Column(db.Float)
     peso = db.Column(db.Float)
-    diametro = db.Column(db.Float)
-    ph = db.Column(db.Float)
-    glicose = db.Column(db.Float)
+    tamanho = db.Column(db.Float)
+    acidez = db.Column(db.Float)
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)

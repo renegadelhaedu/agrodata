@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minhas Coletas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Minhas Coletas</h1>
+</header>
+
+<nav>
+    <a href="/painel">Voltar</a>
+</nav>
+
+<main>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Frutose</th>
+        <th>Peso</th>
+        <th>Tamanho</th>
+        <th>Acidez</th>
+        <th>Data</th>
+    </tr>
+
+    {% for c in coletas %}
+    <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.frutose }}</td>
+        <td>{{ c.peso }}</td>
+        <td>{{ c.tamanho }}</td>
+        <td>{{ c.acidez }}</td>
+        <td>{{ c.timestamp }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+</main>
+
+</body>
+</html>

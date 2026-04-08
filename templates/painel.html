@@ -12,6 +12,14 @@
 <header>
     <h1>AgroData - Monitoramento IoT</h1>
     <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
+
+    <nav>
+    <ul>
+        <li><a href="{{ url_for('user_bp.listar_coletas') }}">Minhas Coletas</a></li>
+        <li><a href="{{ url_for('user_bp.cadastrar_coleta') }}">Nova Coleta</a></li>
+        <li><a href="{{ url_for('user_bp.user_list') }}">Sensores</a></li>
+    </ul>
+</nav>
 </header>
 
 <div class="top-bar">
@@ -51,30 +59,6 @@
             <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='rad_solar') }}"></a>
         </li>
 
-        <!-- ===========================
-            SENSOR FRUTOS
-        ============================ -->
-        <li class="categoria">🍈 Sensores de Frutos</li>
-
-        <li>
-            <a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">🍬 Glicose</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='medida_glicose') }}"></a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('leitura_bp.view_grafico', tipo='ph_suco') }}">⚗️ pH do Suco</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='ph_suco') }}"></a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('leitura_bp.view_grafico', tipo='peso_fruto') }}">⚖️ Peso do Fruto</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='peso_fruto') }}"></a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('leitura_bp.view_grafico', tipo='diametro_fruto') }}">📏 Diâmetro do Fruto</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='diametro_fruto') }}"></a>
-        </li>
 
         <!-- ===========================
             ANÁLISES + SUBSIDEBAR
@@ -90,7 +74,9 @@
                 <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima') }}">🌤️ Clima × Clima</a>
             </li>
             <li>
-                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='frutos') }}">🍈 Frutos × Frutos</a>
+                <a href="{{ url_for('leitura_bp.correlacao_usuario') }}">
+                     🔗 Clima × Fruto (Minhas Coletas)
+                </a>
             </li>
             <li>
                 <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima_fruto') }}">🔗 Clima × Frutos</a>

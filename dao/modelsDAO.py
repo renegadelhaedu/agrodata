@@ -1,5 +1,5 @@
 from dao.banco import db
-from modelo.coleta import Leitura
+from modelo.leitura import Leitura
 from dao.modelsDB import *
 from datetime import datetime
 
@@ -68,18 +68,7 @@ class LeituraDAO:
 
 
 
-
-class UsuarioDAO:
-
-    @staticmethod
-    def cadastrar(nome, email, senha):
-        usuario = Usuario(nome=nome, email=email, senha=senha)
-        db.session.add(usuario)
-        db.session.commit()
-        return usuario
-
-    @staticmethod
-    def buscar_por_email(email):
+d   def buscar_por_email(email):
         return Usuario.query.filter_by(email=email).first()
 
     @staticmethod
@@ -119,27 +108,31 @@ class UsuarioDAO:
 class ColetaFrutoDAO:
 
     @staticmethod
-    def criar(usuario_id, peso, diametro, ph, glicose):
+    def criar(usuario_id, frutose, peso, tamanho, acidez):
         coleta = ColetaFruto(
             usuario_id=usuario_id,
+            frutose=frutose,
             peso=peso,
-            diametro=diametro,
-            ph=ph,
-            glicose=glicose
+            tamanho=tamanho,
+            acidez=acidez
         )
         db.session.add(coleta)
         db.session.commit()
         return coleta
 
     @staticmethod
-    def listar():
+    def listar_por_usuario(usuario_id):
+        return ColetaFruto.query.filter_by(usuario_id=usuario_id).all()
+
+    @staticmethod
+    def listar_todas():
         return ColetaFruto.query.all()
 
     @staticmethod
     def deletar(id):
-        c = ColetaFruto.query.get(id)
-        if not c:
+        coleta = ColetaFruto.query.get(id)
+        if not coleta:
             return False
-        db.session.delete(c)
+        db.session.delete(coleta)
         db.session.commit()
         return True

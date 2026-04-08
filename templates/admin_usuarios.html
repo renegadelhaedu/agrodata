@@ -13,8 +13,9 @@
 
 <nav>
     <ul>
-        <li><a href="{{ url_for('leitura_bp.admin_page') }}">Painel</a></li>
+        <li><a href="/">Página Inicial</a></li>
         <li><a href="{{ url_for('leitura_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
+        <li><a href="{{ url_for('leitura_bp.delete_by_date_page') }}">Excluir por Data</a></li>
         <li><a href="{{ url_for('leitura_bp.admin_logout') }}">Sair</a></li>
     </ul>
 </nav>
