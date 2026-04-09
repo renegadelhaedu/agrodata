@@ -3,7 +3,7 @@ from dao.banco import db
 from routes.leitura_routes import leitura_bp
 from config import Config
 from grafico import grafico
-from dao.modelsDAO import *
+from dao.coletaFrutoDao import *
 from analise.analisador import *
 import time
 import utils

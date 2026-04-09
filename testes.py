@@ -1,4 +1,4 @@
-from dao.modelsDAO import *
+from dao.coletaFrutoDao import *
 import utils
 import time
 import app

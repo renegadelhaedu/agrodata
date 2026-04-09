@@ -1,7 +1,7 @@
 from flask import *
 from dao.usuarioDAO import *
 from dao.leituraDAO import *
-from dao.modelsDAO import ColetaFrutoDAO
+from dao.coletaFrutoDao import ColetaFrutoDAO
 
 from routes.leitura_routes import leitura_bp
 
