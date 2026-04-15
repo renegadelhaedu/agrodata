@@ -1,5 +1,5 @@
 import pandas as pd
-from dao.leitura_dao import *
+from dao.coletaFrutoDao import *
 
 def gerar_correlacao_sensor(tipo1, tipo2):
     dado1 = LeituraDAO.get_dados_sensor(tipo1)

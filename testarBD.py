@@ -1,5 +1,5 @@
 import pandas as pd
-from dao.leitura_dao import *
+from dao.coletaFrutoDao import *
 import app
 app = app.app
 

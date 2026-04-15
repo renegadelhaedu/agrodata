@@ -196,3 +196,63 @@ footer {
     padding: 0 15px;
     width: 100%;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #036635;
+    color: white;
+}
+.form-coleta {
+    max-width: 400px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-coleta label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-coleta input,
+.form-coleta select {
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.form-coleta button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.form-coleta button:hover {
+    background-color: #1b5e20;
+}
+
+.btn-voltar {
+    margin-left: 20px;
+    padding: 8px 12px;
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-voltar:hover {
+    background-color: #333;
+}

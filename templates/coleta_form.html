@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Coleta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Registrar Coleta de Fruto</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/painel" class="btn-voltar">⬅ Voltar ao Painel</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<form method="POST" class="form-coleta">
+
+    <label>Fruto coletado:</label>
+    <select name="nome_fruto">
+    {% for nome in frutas %}
+        <option value="{{ valor }}">{{ nome }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Frutose:</label>
+    <input type="number" step="0.01" name="frutose" required>
+
+    <label>Peso:</label>
+    <input type="number" step="0.01" name="peso" required>
+
+    <label>Tamanho:</label>
+    <input type="number" step="0.01" name="tamanho" required>
+
+    <label>Acidez (pH):</label>
+    <input type="number" step="0.01" name="acidez" required>
+
+
+    <label>Data da Coleta:</label>
+    <input type="datetime-local" name="data" required>
+
+    <button type="submit">Salvar Coleta</button>
+
+</form>
+
+</main>
+
+</body>
+</html>

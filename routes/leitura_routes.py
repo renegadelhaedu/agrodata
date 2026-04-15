@@ -1,22 +1,18 @@
-from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
-from dao.leitura_dao import LeituraDAO
-from werkzeug.security import check_password_hash
-from modelo.coleta import Leitura
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
+from dao.leituraDAO import LeituraDAO
 from grafico import grafico
-from dao.banco import db
 import pandas as pd
 
 leitura_bp = Blueprint("leitura_bp", __name__)
 
-# ===========================
-# API LEITURAS BÁSICA
-# ===========================
-@leitura_bp.route("/", methods=["POST"])
+
+@leitura_bp.route("/api/leituras", methods=["POST"])
 def receber_leitura():
     dados = request.get_json()
     if not dados or not all(k in dados for k in ("sensor_id", "tipo", "valor")):
+        print('NAO - ', dados)
         return jsonify({"erro": "JSON inválido ou incompleto"}), 400
-
+    print('SIM - ', dados)
     leitura = LeituraDAO.salvar(
         sensor_id=dados["sensor_id"],
         tipo=dados["tipo"],
@@ -25,8 +21,16 @@ def receber_leitura():
     return jsonify(leitura.to_dict()), 201
 
 
+
+@leitura_bp.route("/api/leituras", methods=["GET"])
+def listar_leituras_api():
+    leituras = LeituraDAO.listar_todas()
+    return jsonify([l.to_dict() for l in leituras])
+
+
+
 @leitura_bp.route("/", methods=["GET"])
-def listar_leituras():
+def listar_leituras_view():
     leituras = LeituraDAO.listar_todas()
     return jsonify([l.to_dict() for l in leituras])
 
@@ -48,10 +52,82 @@ def view_grafico(tipo):
 
 
 # ===========================
-# CORRELAÇÃO — ROTA PRINCIPAL
+# CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
-@leitura_bp.route("/correlacao", methods=["GET", "POST"])
-def pagina_correlacao():
+@leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
+def pagina_correlacao_clima():
+
+    from analise.analisador import gerar_correlacao_sensor
+
+    # pega intervalo total de datas do banco
+    leituras = LeituraDAO.listar_todas()
+    datas = [l.getTimestamp() for l in leituras if l.getTimestamp()]
+    data_min = min(datas).strftime("%Y-%m-%d") if datas else None
+    data_max = max(datas).strftime("%Y-%m-%d") if datas else None
+
+    if request.method == "GET":
+        return render_template(
+            "correlacao/correlacao_clima.html",
+            data_min=data_min,
+            data_max=data_max,
+        )
+
+    # POST → calcular correlação
+    tipo1 = request.form.get("sensor1")
+    tipo2 = request.form.get("sensor2")
+    data_inicio = request.form.get("data_inicio")
+    data_fim = request.form.get("data_fim")
+
+    if not tipo1 or not tipo2:
+        return render_template(
+            "correlacao/correlacao_clima.html",
+            aviso="Selecione os dois sensores.",
+            data_min=data_min,
+            data_max=data_max,
+
+        )
+
+    leituras1 = LeituraDAO.get_dados_sensor(tipo1)
+    leituras2 = LeituraDAO.get_dados_sensor(tipo2)
+
+    if not leituras1 or not leituras2:
+        return render_template(
+            "correlacao/correlacao_clima.html",
+            aviso="⚠ Sensores sem dados suficientes.",
+            data_min=data_min,
+            data_max=data_max
+        )
+
+    df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
+    df2 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras2])
+
+    df1["timestamp"] = pd.to_datetime(df1["timestamp"])
+    df2["timestamp"] = pd.to_datetime(df2["timestamp"])
+
+    if data_inicio and data_fim:
+        data_inicio = pd.to_datetime(data_inicio)
+        data_fim = pd.to_datetime(data_fim)
+
+        df1 = df1[(df1["timestamp"] >= data_inicio) & (df1["timestamp"] <= data_fim)]
+        df2 = df2[(df2["timestamp"] >= data_inicio) & (df2["timestamp"] <= data_fim)]
+
+    corre, _, _ = gerar_correlacao_sensor(tipo1, tipo2)
+    fig = grafico.grafico_correlacao(df1, df2)
+    graph_html = fig.to_html(full_html=False)
+
+    return render_template(
+        "correlacao/correlacao_clima.html",
+        graphHTML=graph_html,
+        correlacao=corre,
+        data_min=data_min,
+        data_max=data_max,
+
+    )
+
+
+
+@leitura_bp.route("/correlacaofruto", methods=["GET", "POST"])
+def pagina_correlacao_fruto():
 
     from analise.analisador import gerar_correlacao_sensor
 
@@ -62,7 +138,8 @@ def pagina_correlacao():
     data_max = max(datas).strftime("%Y-%m-%d") if datas else None
 
     # quem define a página é o "mode"
-    mode = request.args.get("mode") or request.form.get("mode") or "clima"
+    mode = request.args.get("mode")
+    print(mode)
 
     template_map = {
         "clima": "correlacao_clima.html",
@@ -70,9 +147,9 @@ def pagina_correlacao():
         "clima_fruto": "correlacao_clima_fruto.html"
     }
 
-    template = template_map.get(mode, "correlacao_clima.html")
+    template = template_map.get(mode, "correlacao/correlacao_clima.html")
 
-    # GET → só abre a página
+
     if request.method == "GET":
         return render_template(
             template,
@@ -135,7 +212,6 @@ def pagina_correlacao():
     )
 
 
-
 # ===========================
 # DEBUG
 # ===========================
@@ -156,108 +232,133 @@ def corre_frutos_page():
     return render_template("correlacao_frutos.html")
 
 
-@leitura_bp.route("/correlacao/clima_fruto", methods=["GET"])
-def corre_clima_fruto_page():
-    return render_template("correlacao_clima_fruto.html")
+@leitura_bp.route("/correlacao/user", methods=["GET", "POST"])
+def correlacao_usuario():
+
+    from modelo.modelsDB import ColetaFruto
+    import pandas as pd
+
+    # 🔒 segurança
+    if not session.get("usuario_logado"):
+        return redirect(url_for("user_bp.login"))
+
+    if request.method == "GET":
+        return render_template("correlacao/correlacao_user.html")
+
+    # =========================
+    # PEGAR DADOS DO FORM
+    # =========================
+    sensor = request.form.get("sensor")
+    atributo = request.form.get("atributo")
+    data_inicio = request.form.get("data_inicio")
+    data_fim = request.form.get("data_fim")
+
+    if not sensor or not atributo:
+        return render_template("correcorrelacao_user.html", aviso="Preencha todos os campos")
+
+    # =========================
+    # BUSCAR DADOS DO USUÁRIO
+    # =========================
+    coletas = ColetaFruto.query.filter_by(usuario_id=session["user_id"]).all()
+
+    if not coletas:
+        return render_template("correlacao_user.html", aviso="Você não possui coletas")
+
+    # =========================
+    # DATAFRAME FRUTO
+    # =========================
+    try:
+        df_fruto = pd.DataFrame([
+            {
+                "valor_fruto": getattr(c, atributo),
+                "timestamp": c.timestamp
+            }
+            for c in coletas if getattr(c, atributo) is not None
+        ])
+    except AttributeError:
+        return render_template("correlacao_user.html", aviso="Atributo inválido")
+
+    if df_fruto.empty:
+        return render_template("correlacao_user.html", aviso="Sem dados válidos de fruto")
+
+    df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
+
+    # =========================
+    # BUSCAR SENSOR
+    # =========================
+    leituras = LeituraDAO.get_dados_sensor(sensor)
+
+    if not leituras:
+        return render_template("correlacao_user.html", aviso="Sensor sem dados")
+
+    df_sensor = pd.DataFrame([
+        {
+            "valor_sensor": l.getValor(),
+            "timestamp": l.getTimestamp()
+        }
+        for l in leituras if l.getTimestamp() is not None
+    ])
+
+    if df_sensor.empty:
+        return render_template("correlacao_user.html", aviso="Sem dados do sensor")
+
+    df_sensor["timestamp"] = pd.to_datetime(df_sensor["timestamp"])
+
+    # =========================
+    # FILTRO POR DATA
+    # =========================
+    if data_inicio and data_fim:
+        try:
+            d1 = pd.to_datetime(data_inicio)
+            d2 = pd.to_datetime(data_fim)
+
+            df_fruto = df_fruto[(df_fruto["timestamp"] >= d1) & (df_fruto["timestamp"] <= d2)]
+            df_sensor = df_sensor[(df_sensor["timestamp"] >= d1) & (df_sensor["timestamp"] <= d2)]
+
+        except Exception:
+            return render_template("correlacao_user.html", aviso="Datas inválidas")
+
+    # =========================
+    # 🔥 ALINHAMENTO TEMPORAL (CRÍTICO)
+    # =========================
+    df_fruto = df_fruto.sort_values("timestamp")
+    df_sensor = df_sensor.sort_values("timestamp")
+
+    df = pd.merge_asof(
+        df_fruto,
+        df_sensor,
+        on="timestamp",
+        direction="nearest"
+    )
+
+    # =========================
+    # VALIDAÇÃO
+    # =========================
+    if len(df) < 5:
+        return render_template("correlacao_user.html", aviso="Poucos dados para correlação")
+
+    # =========================
+    # CÁLCULO
+    # =========================
+    correlacao = df["valor_fruto"].corr(df["valor_sensor"])
+
+    # =========================
+    # GRÁFICO
+    # =========================
+    from grafico import grafico
+    fig = grafico.grafico_correlacao(
+        df[["valor_fruto", "timestamp"]],
+        df[["valor_sensor", "timestamp"]]
+    )
+
+    graph_html = fig.to_html(full_html=False)
+
+    return render_template(
+        "correlacao_user.html",
+        correlacao=round(correlacao, 4),
+        graphHTML=graph_html
+    )
 
 
 
 # Rota do painel admin (exige login)
-@leitura_bp.route("/admin", methods=["GET"])
-def admin_page():
-    if not session.get("is_admin"):
-        return redirect(url_for("leitura_bp.admin_login"))
-    leituras = LeituraDAO.listar_todas()
-    # transforma em dicionários simples para o template
-    leituras_data = [{
-        "id": l.id,
-        "sensor_id": l.sensor_id,
-        "tipo": l.tipo,
-        "valor": getattr(l, "valor", None),
-        "timestamp": str(l.timestamp)
-    } for l in leituras]
-    return render_template("admin_panel.html", leituras=leituras_data)
-
-
-
-@leitura_bp.route("/admin/login", methods=["GET", "POST"])
-def admin_login():
-    if request.method == "GET":
-        return render_template("admin_login.html")
-
-    usuario = request.form.get("usuario")
-    senha = request.form.get("senha")
-
-    user_hash = current_app.config.get("ADMIN_USER_HASH")
-    pass_hash = current_app.config.get("ADMIN_PASSWORD_HASH")
-
-    ok_user = check_password_hash(user_hash, usuario)
-    ok_pass = check_password_hash(pass_hash, senha)
-
-    if ok_user and ok_pass:
-        session["is_admin"] = True
-        return redirect(url_for("leitura_bp.admin_page"))
-
-    flash("Usuário ou senha inválidos.", "danger")
-    return redirect(url_for("leitura_bp.admin_login"))
-
-
-# Logout
-@leitura_bp.route("/admin/logout")
-def admin_logout():
-    session.pop("is_admin", None)
-    flash("Logout efetuado.", "info")
-    return redirect(url_for("home"))
-
-
-@leitura_bp.route("/admin/delete", methods=["POST"])
-def admin_delete():
-    if not session.get("is_admin"):
-        return redirect(url_for("leitura_bp.admin_login"))
-
-    sensor = request.form.get("sensor")
-    data_inicio = request.form.get("data_inicio")
-    data_fim = request.form.get("data_fim")
-
-    if not sensor or not data_inicio or not data_fim:
-        flash("Preencha todos os campos!", "danger")
-        return redirect(url_for("leitura_bp.admin_page"))
-
-    from datetime import datetime
-    try:
-        d1 = datetime.strptime(data_inicio, "%Y-%m-%d")
-        d2 = datetime.strptime(data_fim, "%Y-%m-%d")
-    except:
-        flash("Datas inválidas!", "danger")
-        return redirect(url_for("leitura_bp.admin_page"))
-
-    # Buscar leituras do tipo escolhido no intervalo solicitado
-    leituras = (
-        Leitura.query
-        .filter(Leitura.tipo == sensor)
-        .filter(Leitura.timestamp >= d1)
-        .filter(Leitura.timestamp <= d2)
-        .all()
-    )
-
-    if not leituras:
-        flash("Nenhuma leitura encontrada nesse intervalo!", "warning")
-        return redirect(url_for("leitura_bp.admin_page"))
-
-    # Apagar tudo
-    for l in leituras:
-        db.session.delete(l)
-
-    db.session.commit()
-
-    flash(f"{len(leituras)} leituras do sensor '{sensor}' foram removidas.", "success")
-    return redirect(url_for("leitura_bp.admin_page"))
-
-@leitura_bp.route("/admin/delete_by_date", methods=["GET"])
-def delete_by_date_page():
-    if not session.get("is_admin"):
-        return redirect(url_for("leitura_bp.admin_login"))
-    return render_template("admin_delete_by_date_page.html")
-
-
-

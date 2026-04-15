@@ -217,3 +217,13 @@ th {
 .btn-delete-range:hover {
     background-color: #c62828;
 }
+
+.status-aprovado {
+    color: green;
+    font-weight: bold;
+}
+
+.status-pendente {
+    color: orange;
+    font-weight: bold;
+}
