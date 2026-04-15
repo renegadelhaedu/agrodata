@@ -14,9 +14,9 @@
 <nav>
     <ul>
         <li><a href="/">Página Inicial</a></li>
-        <li><a href="{{ url_for('leitura_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
-        <li><a href="{{ url_for('leitura_bp.delete_by_date_page') }}">Excluir por Data</a></li>
-        <li><a href="{{ url_for('leitura_bp.admin_logout') }}">Sair</a></li>
+        <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
+        <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
+        <li><a href="{{ url_for('admin_bp.admin_logout') }}">Sair</a></li>
     </ul>
 </nav>
 
@@ -40,7 +40,7 @@
         <td>{{ u.email }}</td>
 
         <td>
-            <form action="{{ url_for('leitura_bp.admin_delete_usuario', id=u.id) }}" method="POST" style="display:inline;">
+            <form action="{{ url_for('admin_bp.admin_delete_usuario', id=u.id) }}" method="POST" style="display:inline;">
                  <button type="submit" class="btn-delete"
                       onclick="return confirm('Tem certeza que deseja remover este usuário?')">
                       Excluir

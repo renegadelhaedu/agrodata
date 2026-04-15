@@ -1,6 +1,5 @@
-from dao.banco import db
 from modelo.leitura import Leitura
-from dao.modelsDB import *
+from modelo.modelsDB import *
 from datetime import datetime
 
 

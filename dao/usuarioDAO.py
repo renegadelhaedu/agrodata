@@ -2,7 +2,7 @@
 
 
 from dao.banco import db
-from dao.modelsDB import Usuario
+from modelo.modelsDB import Usuario
 
 
 class UsuarioDAO:

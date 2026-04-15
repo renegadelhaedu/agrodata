@@ -14,12 +14,12 @@
     <ul>
         <li><a href="/">Página Inicial</a></li>
 
-        <li><a href="{{ url_for('leitura_bp.admin_usuarios') }}">Usuários Ativos</a></li>
-        <li><a href="{{ url_for('leitura_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
+        <li><a href="{{ url_for('admin_bp.admin_usuarios') }}">Usuários Ativos</a></li>
+        <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
 
-        <li><a href="{{ url_for('leitura_bp.delete_by_date_page') }}">Excluir por Data</a></li>
+        <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
 
-        <li><a href="{{ url_for('leitura_bp.admin_logout') }}">Sair</a></li>
+        <li><a href="{{ url_for('admin_bp.admin_logout') }}">Sair</a></li>
     </ul>
 </nav>
 
@@ -44,7 +44,7 @@
         <td>{{ l.timestamp }}</td>
 
         <td>
-            <form action="{{ url_for('leitura_bp.admin_delete_by_id', id=l.id) }}" method="POST">
+            <form action="{{ url_for('admin_bp.admin_delete_by_id', id=l.id) }}" method="POST">
                 <button type="submit" class="btn-delete"
                     onclick="return confirm('Tem certeza que deseja apagar esta leitura?')">
                     Excluir

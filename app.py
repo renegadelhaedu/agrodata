@@ -1,5 +1,7 @@
 from flask import Flask, render_template
+from dao.leituraDAO import *
 from dao.banco import db
+from routes.admin_bp import admin_bp
 from routes.leitura_routes import leitura_bp
 from config import Config
 from grafico import grafico
@@ -20,6 +22,7 @@ with app.app_context():
 
 app.register_blueprint(leitura_bp, url_prefix="/leituras")
 app.register_blueprint(user_bp)
+app.register_blueprint(admin_bp)
 
 
 def preencher():

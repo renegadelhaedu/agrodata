@@ -41,22 +41,22 @@
 
         <li>
             <a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='temperatura_ar') }}"></a>
+
         </li>
 
         <li>
             <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_ar') }}"></a>
+
         </li>
 
         <li>
             <a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">🌱 Umidade do Solo</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='umidade_solo') }}"></a>
+
         </li>
 
         <li>
             <a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a>
-            <a class="mini-link" href="{{ url_for('leitura_bp.pagina_correlacao', sensor1='rad_solar') }}"></a>
+
         </li>
 
 
@@ -71,16 +71,14 @@
         <li class="submenu-titulo">🔗 Correlação entre Sensores</li>
         <ul class="submenu">
             <li>
-                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima') }}">🌤️ Clima × Clima</a>
+                <a href="{{ url_for('leitura_bp.pagina_correlacao_clima') }}">🌤️ Clima × Clima</a>
             </li>
             <li>
-                <a href="{{ url_for('leitura_bp.correlacao_usuario') }}">
-                     🔗 Clima × Fruto (Minhas Coletas)
+                <a href="{{ url_for('leitura_bp.pagina_correlacao_fruto') }}">
+                     🔗 Clima × Fruto
                 </a>
             </li>
-            <li>
-                <a href="{{ url_for('leitura_bp.pagina_correlacao', mode='clima_fruto') }}">🔗 Clima × Frutos</a>
-            </li>
+
         </ul>
 
 

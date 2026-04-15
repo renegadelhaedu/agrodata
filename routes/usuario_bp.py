@@ -2,7 +2,7 @@ from flask import *
 from dao.usuarioDAO import *
 from dao.leituraDAO import *
 from dao.coletaFrutoDao import ColetaFrutoDAO
-
+from utils import lista_frutos
 from routes.leitura_routes import leitura_bp
 
 user_bp = Blueprint("user_bp", __name__)
@@ -93,27 +93,46 @@ def cadastrar_coleta():
         return redirect(url_for("user_bp.login"))
 
     if request.method == "POST":
+
+        user_id = session.get("user_id")
+
+        # 🔴 validação crítica
+        if not user_id:
+            flash("Erro: usuário não identificado")
+            return redirect(url_for("user_bp.login"))
+
         try:
+            nome_fruto = request.form["nome_fruto"]
             frutose = float(request.form["frutose"])
             peso = float(request.form["peso"])
             tamanho = float(request.form["tamanho"])
             acidez = float(request.form["acidez"])
-        except:
+
+            data_str = request.form["data"]
+            timestamp = datetime.strptime(data_str, "%Y-%m-%dT%H:%M")
+
+        except Exception as e:
+            print(e)
             flash("Dados inválidos")
             return redirect(url_for("user_bp.cadastrar_coleta"))
 
+        # 🔴 DEBUG CRÍTICO
+        print("SALVANDO COM USER_ID:", user_id)
+
         ColetaFrutoDAO.criar(
-            usuario_id=session["user_id"],
+            usuario_id=user_id,
+            nome_fruto=nome_fruto,
             frutose=frutose,
             peso=peso,
             tamanho=tamanho,
-            acidez=acidez
+            acidez=acidez,
+            timestamp=timestamp
         )
 
         flash("Coleta registrada com sucesso")
         return redirect(url_for("user_bp.listar_coletas"))
 
-    return render_template("coleta_form.html")
+    return render_template("coleta_form.html", frutas=lista_frutos)
 
 @user_bp.route("/coletas")
 def listar_coletas():
@@ -121,9 +140,19 @@ def listar_coletas():
     if not session.get("usuario_logado"):
         return redirect(url_for("user_bp.login"))
 
-    coletas = ColetaFrutoDAO.listar_por_usuario(session["user_id"])
+    user_id = session["user_id"]
+
+    coletas = ColetaFrutoDAO.listar_por_usuario(user_id)
+
+    print("COLETAS DO USUARIO:", coletas)  # DEBUG
 
     return render_template("coletas_usuario.html", coletas=coletas)
 
 
-
+@user_bp.route("/debug/coletas")
+def debug_coletas():
+    coletas = ColetaFrutoDAO.listar_todas()
+    return "<br>".join([
+        f"ID:{c.id} | USER:{c.usuario_id} | DATA:{c.timestamp}"
+        for c in coletas
+    ])
