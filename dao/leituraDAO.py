@@ -1,6 +1,7 @@
-from dao.banco import db
-from modelo.coleta import Leitura
+from modelo.leitura import Leitura
+from modelo.modelsDB import *
 from datetime import datetime
+
 
 class LeituraDAO:
     @staticmethod
@@ -62,5 +63,44 @@ class LeituraDAO:
         if not leitura:
             return False
         db.session.delete(leitura)
+        db.session.commit()
+        return True
+
+
+
+    def buscar_por_email(email):
+        return Usuario.query.filter_by(email=email).first()
+
+    @staticmethod
+    def autenticar(email, senha):
+        return Usuario.query.filter_by(email=email, senha=senha).first()
+
+    @staticmethod
+    def listar_todos():
+        return Usuario.query.all()
+
+    @staticmethod
+    def aprovar_usuario(id_usuario):
+        user = Usuario.query.get(id_usuario)
+        if not user:
+            return False
+        user.aprovado = 1
+        db.session.commit()
+        return True
+
+    @staticmethod
+    def listar_pendentes():
+        return Usuario.query.filter_by(aprovado=False).all()
+
+    @staticmethod
+    def listar_aprovados():
+        return Usuario.query.filter_by(aprovado=True).all()
+
+    @staticmethod
+    def deletar(id_usuario):
+        user = Usuario.query.get(id_usuario)
+        if not user:
+            return False
+        db.session.delete(user)
         db.session.commit()
         return True

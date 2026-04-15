@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mineração de Dados</title>
+    <link rel="stylesheet" href="/static/css/painel.css">
+</head>
+<body>
+
+<header>
+    <h1>Mineração de Dados</h1>
+</header>
+
+<main>
+
+<h2>Gerar Análise</h2>
+
+<form method="POST" action="/leituras/minerar">
+    <label>Tipo de tarefa:</label>
+
+    <select name="tipo">
+        <option value="correlacao">Correlação</option>
+    </select>
+
+    <button type="submit">Executar</button>
+</form>
+
+{% if resultado %}
+<div class="resultado">
+    <h3>Resultado:</h3>
+    <p>{{ resultado }}</p>
+</div>
+{% endif %}
+
+</main>
+
+</body>
+</html>

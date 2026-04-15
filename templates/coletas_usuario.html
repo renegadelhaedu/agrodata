@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Coletas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Minhas Coletas</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/painel" class="btn-voltar">⬅ Voltar ao Painel</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<p>Total de coletas: {{ coletas|length }}</p>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Frutose</th>
+        <th>Peso</th>
+        <th>Tamanho</th>
+        <th>Acidez</th>
+        <th>Data</th>
+    </tr>
+
+    {% for c in coletas %}
+    <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.frutose }}</td>
+        <td>{{ c.peso }}</td>
+        <td>{{ c.tamanho }}</td>
+        <td>{{ c.acidez }}</td>
+        <td>
+            {{ c.timestamp.strftime('%d/%m/%Y %H:%M') if c.timestamp else '—' }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</main>
+
+</body>
+</html>

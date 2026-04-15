@@ -2,30 +2,29 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Correlação - Frutos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_frutos.css') }}">
+    <title>Correlação - Clima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_clima.css') }}">
 </head>
 <body>
 
 <header>
-    <h1>🍈 Correlação — Frutos</h1>
-    <p>Escolha dois sensores de frutos e o intervalo de datas.</p>
+    <h1>📊 Correlação — Clima</h1>
+    <p>Escolha dois sensores de clima e o intervalo de datas.</p>
 </header>
 
 <main>
-    <a href="/" class="btn-voltar">⬅️ Voltar ao Menu</a>
+    <a href="/painel" class="btn-voltar">⬅️ Voltar ao Menu</a>
 
-    <form action="{{ url_for('leitura_bp.pagina_correlacao') }}" method="POST" class="form-corre">
-        <input type="hidden" name="mode" value="frutos">
+    <form action="{{ url_for('leitura_bp.pagina_correlacao_clima') }}" method="POST" class="form-corre">
+        <input type="hidden" name="mode" value="clima">
 
         <div class="campo">
             <label for="sensor1">Sensor 1:</label>
             <select name="sensor1" id="sensor1" required>
                 <option value="">-- Escolha --</option>
-                <option value="medida_glicose" {% if tipo1 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
-                <option value="ph_suco" {% if tipo1 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
-                <option value="peso_fruto" {% if tipo1 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
-                <option value="diametro_fruto" {% if tipo1 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+                <option value="temperatura_ar" {% if tipo1 == 'temperatura_ar' %}selected{% endif %}>Temperatura do Ar</option>
+                <option value="umidade_ar" {% if tipo1 == 'umidade_ar' %}selected{% endif %}>Umidade do Ar</option>
+                <option value="umidade_solo" {% if tipo1 == 'umidade_solo' %}selected{% endif %}>Umidade do Solo</option>
             </select>
         </div>
 
@@ -33,10 +32,9 @@
             <label for="sensor2">Sensor 2:</label>
             <select name="sensor2" id="sensor2" required>
                 <option value="">-- Escolha --</option>
-                <option value="medida_glicose" {% if tipo2 == 'medida_glicose' %}selected{% endif %}>Glicose</option>
-                <option value="ph_suco" {% if tipo2 == 'ph_suco' %}selected{% endif %}>pH do Suco</option>
-                <option value="peso_fruto" {% if tipo2 == 'peso_fruto' %}selected{% endif %}>Peso do Fruto</option>
-                <option value="diametro_fruto" {% if tipo2 == 'diametro_fruto' %}selected{% endif %}>Diâmetro do Fruto</option>
+                <option value="temperatura_ar" {% if tipo2 == 'temperatura_ar' %}selected{% endif %}>Temperatura do Ar</option>
+                <option value="umidade_ar" {% if tipo2 == 'umidade_ar' %}selected{% endif %}>Umidade do Ar</option>
+                <option value="umidade_solo" {% if tipo2 == 'umidade_solo' %}selected{% endif %}>Umidade do Solo</option>
             </select>
         </div>
 

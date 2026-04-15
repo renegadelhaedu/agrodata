@@ -1,0 +1,99 @@
+/* ======= RESET ======= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* ======= BODY ======= */
+body {
+    background: #f7f9fb;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ======= HEADER ======= */
+header {
+    background: #036635;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: .5rem;
+}
+
+main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 400px;
+    margin: auto;
+}
+
+h2 {
+    color: #036635;
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button, .btn-admin {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    background: #036635;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover, .btn-admin:hover {
+    background: #02b252;
+}
+
+a {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #036635;
+}
+/* TOPO: título + botão */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* BOTÃO ADMIN */
+.btn-admin {
+    width: auto; /* ESSENCIAL */
+    padding: 8px 12px;
+    background: #036635;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+/* hover correto */
+.btn-admin:hover {
+    background: #02b252;
+}

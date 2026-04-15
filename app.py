@@ -1,13 +1,16 @@
 from flask import Flask, render_template
+from dao.leituraDAO import *
 from dao.banco import db
+from routes.admin_bp import admin_bp
 from routes.leitura_routes import leitura_bp
 from config import Config
 from grafico import grafico
-from dao.leitura_dao import *
+from dao.coletaFrutoDao import *
 from analise.analisador import *
 import time
 import utils
 import threading
+from routes.usuario_bp import user_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,6 +21,9 @@ with app.app_context():
     db.create_all()
 
 app.register_blueprint(leitura_bp, url_prefix="/leituras")
+app.register_blueprint(user_bp)
+app.register_blueprint(admin_bp)
+
 
 def preencher():
     valor = 27
@@ -28,12 +34,12 @@ def preencher():
 
 @app.route("/")
 def home():
-    return render_template('painel.html')
+    return render_template('homepage.html')
 
 
 @app.route('/testar')
 def testar():
-    threading.Thread(preencher()).start()
+    threading.Thread(target=preencher).start()
     return 'ok', 200
 
 
@@ -46,9 +52,10 @@ def analisar():
 
 @app.route("/debug/leituras")
 def debug_leituras():
-    from dao.leitura_dao import LeituraDAO
+    from dao.leituraDAO import LeituraDAO
     leituras = LeituraDAO.listar_todas()
     return "<br>".join([f"{l.tipo} - {l.getTimestamp()} - {l.getValor()}" for l in leituras])
+
 
 
 if __name__ == "__main__":

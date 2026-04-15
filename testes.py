@@ -1,4 +1,4 @@
-from dao.leitura_dao import *
+from dao.coletaFrutoDao import *
 import utils
 import time
 import app

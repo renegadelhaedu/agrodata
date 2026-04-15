@@ -6,3 +6,10 @@ class TipoSensor(Enum):
     UMIDADE_SOLO = 'umidade_solo'
     RADIACAO = 'radiacao_uv'
 
+class TipoFruta(Enum):
+    ACEROLA = 'acerola'
+    MANGA = 'manga'
+    COCO = 'coco'
+    CAJU = 'cajú'
+
+lista_frutos = [fruta.value for fruta in TipoFruta]
