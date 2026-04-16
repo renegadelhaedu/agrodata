@@ -1,5 +1,23 @@
 from werkzeug.security import generate_password_hash
-import os
+from flask_login import LoginManager
+login_manager = LoginManager()
+
+@login_manager.user_loader
+def load_user(user_id):
+    from modelo.modelsDB import Admin, Usuario
+    try:
+        tipo_usuario, id_numerico = user_id.split('_')
+        id_numerico = int(id_numerico)
+
+        if tipo_usuario == 'admin':
+            return Admin()
+        elif tipo_usuario == 'user':
+            return Usuario.query.get(id_numerico)
+
+    except ValueError:
+        return None
+    return None
+
 
 class Config:
     SECRET_KEY = "agrodata2025"

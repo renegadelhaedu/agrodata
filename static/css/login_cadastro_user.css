@@ -74,10 +74,14 @@ a {
 }
 /* TOPO: título + botão */
 .top-bar {
+
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    width: 150px;
+    margin-left:60px;
 }
 
 /* BOTÃO ADMIN */
