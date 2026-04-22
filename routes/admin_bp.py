@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
+from flask import Blueprint, request,  render_template,  redirect, url_for, flash, current_app
 from dao.leituraDAO import LeituraDAO
 from werkzeug.security import check_password_hash
 from modelo.leitura import Leitura
@@ -6,7 +6,7 @@ from modelo.modelsDB import Admin
 from dao.banco import db
 from decorators import admin_required
 from dao.usuarioDAO import UsuarioDAO
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required
 
 
 admin_bp = Blueprint("admin_bp", __name__)

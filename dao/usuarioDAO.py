@@ -1,6 +1,3 @@
-
-
-
 from dao.banco import db
 from modelo.modelsDB import Usuario
 

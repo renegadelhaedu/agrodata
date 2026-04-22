@@ -1,10 +1,9 @@
 from flask import Flask, render_template
-from dao.leituraDAO import *
+from dao.leituraDAO import LeituraDAO
 from routes.admin_bp import admin_bp
 from routes.leitura_routes import leitura_bp
 from config import Config
 from grafico import grafico
-from dao.coletaFrutoDao import *
 from analise.analisador import *
 import time
 import utils
@@ -16,6 +15,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
+
+
 login_manager.init_app(app)
 login_manager.login_view = 'home'
 
