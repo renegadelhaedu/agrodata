@@ -3,6 +3,7 @@ from dao.leituraDAO import LeituraDAO
 from grafico import grafico
 import pandas as pd
 
+
 leitura_bp = Blueprint("leitura_bp", __name__)
 
 

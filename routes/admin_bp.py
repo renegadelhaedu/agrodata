@@ -1,20 +1,20 @@
-from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash, current_app
+from flask import Blueprint, request,  render_template,  redirect, url_for, flash, current_app
 from dao.leituraDAO import LeituraDAO
 from werkzeug.security import check_password_hash
 from modelo.leitura import Leitura
-from grafico import grafico
+from modelo.modelsDB import Admin
 from dao.banco import db
-import pandas as pd
+from decorators import admin_required
 from dao.usuarioDAO import UsuarioDAO
+from flask_login import login_user, logout_user, login_required
 
 
 admin_bp = Blueprint("admin_bp", __name__)
 
-
+@login_required
+@admin_required
 @admin_bp.route("/admin", methods=["GET"])
 def admin_page():
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
     leituras = LeituraDAO.listar_todas()
     # transforma em dicionários simples para o template
     leituras_data = [{
@@ -43,7 +43,7 @@ def admin_login():
     ok_pass = check_password_hash(pass_hash, senha)
 
     if ok_user and ok_pass:
-        session["is_admin"] = True
+        login_user(Admin())
         return redirect(url_for("admin_bp.admin_page"))
 
     flash("Usuário ou senha inválidos.", "danger")
@@ -53,16 +53,14 @@ def admin_login():
 # Logout
 @admin_bp.route("/admin/logout")
 def admin_logout():
-    session.pop("is_admin", None)
+    logout_user()
     flash("Logout efetuado.", "info")
     return redirect(url_for("home"))
 
-
+@login_required
+@admin_required
 @admin_bp.route("/admin/delete", methods=["POST"])
 def admin_delete():
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     sensor = request.form.get("sensor")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
@@ -101,11 +99,10 @@ def admin_delete():
     flash(f"{len(leituras)} leituras do sensor '{sensor}' foram removidas.", "success")
     return redirect(url_for("admin_bp.admin_page"))
 
+@login_required
+@admin_required
 @admin_bp.route("/admin/delete/<int:id>", methods=["POST"])
 def admin_delete_by_id(id):
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     leitura = Leitura.query.get(id)
 
     if not leitura:
@@ -118,54 +115,45 @@ def admin_delete_by_id(id):
     flash("Leitura excluída", "success")
     return redirect(url_for("admin_bp.admin_page"))
 
+@login_required
+@admin_required
 @admin_bp.route("/admin/delete_by_date", methods=["GET"])
 def delete_by_date_page():
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
     return render_template("admin/admin_delete_by_date_page.html")
 
 
-
-
+@login_required
+@admin_required
 @admin_bp.route("/admin/usuarios/delete/<int:id>", methods=["POST"])
 def admin_delete_usuario(id):
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     UsuarioDAO.deletar(id)
     return redirect(url_for("admin_bp.admin_usuarios"))
 
-
+@login_required
+@admin_required
 @admin_bp.route("/admin/usuarios")
 def admin_usuarios():
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     usuarios = UsuarioDAO.listar_aprovados()  # 🔥 aqui
     return render_template("admin/admin_usuarios.html", usuarios=usuarios)
 
-
+@login_required
+@admin_required
 @admin_bp.route("/admin/usuarios/pendentes")
 def usuarios_pendentes():
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     usuarios = UsuarioDAO.listar_pendentes()
     return render_template("admin/admin_pendentes.html", usuarios=usuarios)
 
+@login_required
+@admin_required
 @admin_bp.route("/admin/usuarios/aprovar/<int:id>")
 def aprovar_usuario(id):
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     UsuarioDAO.aprovar_usuario(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
+@login_required
+@admin_required
 @admin_bp.route("/admin/usuarios/recusar/<int:id>")
 def recusar_usuario(id):
-    if not session.get("is_admin"):
-        return redirect(url_for("admin_bp.admin_login"))
-
     UsuarioDAO.deletar(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
