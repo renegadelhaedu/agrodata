@@ -7,6 +7,18 @@ import pandas as pd
 leitura_bp = Blueprint("leitura_bp", __name__)
 
 
+
+@leitura_bp.route('/receber')
+def receber_dados_sensores():
+    umidade_ar = request.args.get('umidade_ar')
+    temperatura_ar = request.args.get('temperatura_ar')
+    umidade_solo = request.args.get('umidade_solo')
+
+    LeituraDAO.salvar(sensor_id=1,tipo='umidade_ar', valor=umidade_ar)
+    LeituraDAO.salvar(sensor_id=2, tipo='temperatura_ar', valor=temperatura_ar)
+    LeituraDAO.salvar(sensor_id=3, tipo='umidade_solo', valor=umidade_solo)
+    return jsonify("deu certo"), 201
+
 @leitura_bp.route("/api/leituras", methods=["POST"])
 def receber_leitura():
     dados = request.get_json()
@@ -21,12 +33,6 @@ def receber_leitura():
     )
     return jsonify(leitura.to_dict()), 201
 
-
-
-@leitura_bp.route("/api/leituras", methods=["GET"])
-def listar_leituras_api():
-    leituras = LeituraDAO.listar_todas()
-    return jsonify([l.to_dict() for l in leituras])
 
 
 
