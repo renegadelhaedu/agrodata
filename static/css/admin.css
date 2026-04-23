@@ -1,60 +1,59 @@
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Segoe UI", sans-serif;
-    background: #f9fafb;
-    color: #333;
+    background: #f4f6f8;
     margin: 0;
-    padding: 0;
+    color: #333;
 }
 
-/* Header */
+/* HEADER */
 header {
-    background-color: #2e7d32;
+    background: linear-gradient(135deg, #2e7d32, #388e3c);
     color: white;
     text-align: center;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 25px;
 }
 
-/* Navbar */
+/* NAV */
 nav {
-    background-color: #388e3c;
-    text-align: center;
+    background: #2e7d32;
     padding: 10px 0;
 }
 
 nav ul {
-    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    list-style: none;
     margin: 0;
     padding: 0;
 }
 
-nav ul li {
-    display: inline-block;
-    margin: 0 15px;
-}
-
-nav ul li a {
+nav a {
     color: white;
     text-decoration: none;
-    font-weight: bold;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
 }
 
-nav ul li a:hover {
-    background-color: #66bb6a;
+nav a:hover {
+    background: #4caf50;
 }
 
-/* Texto */
 p {
     text-align: center;
-    font-size: 1.2em;
-    color: #333;
 }
 
-/* Login */
-.login-container, .edit-container {
+/* ========================= */
+/* LOGIN (ISOLADO) */
+/* ========================= */
+
+.login-container {
     width: 400px;
     margin: 40px auto;
     background: white;
@@ -63,7 +62,8 @@ p {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-input, button {
+.login-container input,
+.login-container button {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
@@ -71,159 +71,118 @@ input, button {
     border: 1px solid #ccc;
 }
 
-button {
-    background-color: #2e7d32;
+.login-container button {
+    background: #2e7d32;
     color: white;
-    font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    background-color: #43a047;
+.login-container button:hover {
+    background: #43a047;
 }
 
-/* Botão Voltar */
-.btn-voltar {
-    display: inline-block;
-    margin-top: 20px;
-    background-color: #2e7d32;
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    transition: background 0.3s, transform 0.2s;
-}
+/* ========================= */
+/* FILTRO (SEPARADO) */
+/* ========================= */
 
-.btn-voltar:hover {
-    background-color: #43a047;
-    transform: translateY(-2px);
-}
-
-/* Tabela do admin */
-table {
+.filter-form {
     width: 95%;
-    margin: 25px auto;
+    max-width: 900px;
+    margin: 20px auto;
+
     background: white;
-    border-radius: 12px;
-    border-collapse: collapse;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px;
+    border-radius: 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: center;
-}
-
-th {
-    background-color: #388e3c;
-    color: white;
-}
-
-.btn-edit {
-    color: #1e88e5;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.btn-delete {
-    background-color: #c62828;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn-delete:hover {
-    background-color: #e53935;
-}
-
-.edit-container {
-    width: 400px;
-    margin: 40px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-
-.edit-container label {
-    display: block;
-    margin-top: 10px;
+.filter-form label {
+    font-size: 14px;
     font-weight: 600;
 }
 
-.edit-container input,
-.edit-container select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 8px;
+.filter-form input,
+.filter-form select {
+    padding: 8px;
+    border-radius: 6px;
     border: 1px solid #ccc;
 }
 
-.btn-excluir {
-    margin-top: 15px;
-    width: 100%;
-    background-color: #c62828;
+.filter-form button {
+    padding: 10px 16px;
+    border: none;
+    background: #2e7d32;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background: #43a047;
+}
+
+/* ========================= */
+/* TABELA */
+/* ========================= */
+
+table {
+    width: 95%;
+    margin: 20px auto;
+    background: white;
+    border-radius: 10px;
+    border-collapse: collapse;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+th {
+    background: #388e3c;
     color: white;
     padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
-.btn-excluir:hover {
-    background-color: #e53935;
-}
-
-.form-container {
-    width: 90%;
-    margin: 25px auto;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.form-container h2 {
-    text-align: center;
-    color: #2e7d32;
-}
-
-.form-container form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.btn-delete-range {
-    background-color: #e53935;
-    color: white;
+td {
     padding: 10px;
-    border-radius: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+tr:hover {
+    background: #f1f8f4;
+}
+
+.btn-delete {
+    background: #c62828;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: white;
     border: none;
-    cursor: pointer;
-    font-weight: bold;
 }
 
-.btn-delete-range:hover {
-    background-color: #c62828;
+.btn-delete:hover {
+    background: #e53935;
 }
 
-.status-aprovado {
-    color: green;
-    font-weight: bold;
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
-.status-pendente {
-    color: orange;
-    font-weight: bold;
-}
+/* Botão Voltar */ .btn-voltar { display: inline-block; margin-top: 20px; background-color: #2e7d32; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 15px; font-weight: 600; transition: background 0.3s, transform 0.2s; } .btn-voltar:hover { background-color: #43a047; transform: translateY(-2px); }

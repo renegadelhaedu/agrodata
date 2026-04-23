@@ -3,8 +3,7 @@ from dao.usuarioDAO import *
 from dao.leituraDAO import *
 from dao.coletaFrutoDao import ColetaFrutoDAO
 from utils import lista_frutos
-from routes.leitura_routes import leitura_bp
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, login_required, current_user
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -29,13 +28,13 @@ def login():
         flash("Login com sucesso")
         return redirect(url_for("user_bp.painel_usuario"))
 
-    return render_template("login_user.html")
+    return render_template("usuario/login_user.html")
 
 @login_required
 @user_bp.route("/painel")
 def painel_usuario():
     leituras = LeituraDAO.listar_todas()
-    return render_template("painel.html", leituras=leituras)
+    return render_template("usuario/painel.html", leituras=leituras)
 
 
 
@@ -68,7 +67,7 @@ def user_list():
         "valor": getattr(l, "valor", None),
         "timestamp": str(l.timestamp)
     } for l in leituras]
-    return render_template("user_list.html", leituras=leituras_data)
+    return render_template("usuario/user_list.html", leituras=leituras_data)
 
 
 @user_bp.route("/logout")
@@ -109,7 +108,7 @@ def cadastrar_coleta():
         flash("Coleta registrada com sucesso")
         return redirect(url_for("user_bp.listar_coletas"))
 
-    return render_template("coleta_form.html", frutas=lista_frutos)
+    return render_template("usuario/coleta_form.html", frutas=lista_frutos)
 
 @login_required
 @user_bp.route("/minhascoletas")
@@ -118,9 +117,9 @@ def listar_coletas():
 
     print("COLETAS DO USUARIO:", coletas)  # DEBUG
 
-    return render_template("coletas_usuario.html", coletas=coletas)
+    return render_template("usuario/coletas_usuario.html", coletas=coletas)
 
-
+@login_required
 @user_bp.route("/debug/coletas")
 def debug_coletas():
     coletas = ColetaFrutoDAO.listar_todas()

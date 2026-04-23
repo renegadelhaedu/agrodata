@@ -1,4 +1,4 @@
-from modelo.modelsDB import *
+from modelo.coletaFruto import *
 
 
 class ColetaFrutoDAO:

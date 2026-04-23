@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
+from flask_login import login_required
+
 from dao.leituraDAO import LeituraDAO
+from dao.coletaFrutoDao import ColetaFrutoDAO
+from decorators import admin_required
 from grafico import grafico
 import pandas as pd
 
@@ -22,7 +26,8 @@ def receber_leitura():
     return jsonify(leitura.to_dict()), 201
 
 
-
+@login_required
+@admin_required
 @leitura_bp.route("/api/leituras", methods=["GET"])
 def listar_leituras_api():
     leituras = LeituraDAO.listar_todas()
@@ -39,6 +44,8 @@ def listar_leituras_view():
 # ===========================
 # GRAFICO ÚNICO
 # ===========================
+@login_required
+@admin_required
 @leitura_bp.route("/grafico/<string:tipo>")
 def view_grafico(tipo):
     leituras = LeituraDAO.get_dados_sensor(tipo) or []
@@ -127,92 +134,118 @@ def pagina_correlacao_clima():
 
 
 
-@leitura_bp.route("/correlacaofruto", methods=["GET", "POST"])
+@leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
 def pagina_correlacao_fruto():
 
-    from analise.analisador import gerar_correlacao_sensor
-
-    # pega intervalo total de datas do banco
-    leituras = LeituraDAO.listar_todas()
-    datas = [l.getTimestamp() for l in leituras if l.getTimestamp()]
-    data_min = min(datas).strftime("%Y-%m-%d") if datas else None
-    data_max = max(datas).strftime("%Y-%m-%d") if datas else None
-
-    # quem define a página é o "mode"
-    mode = request.args.get("mode")
-    print(mode)
-
-    template_map = {
-        "clima": "correlacao_clima.html",
-        "frutos": "correlacao_frutos.html",
-        "clima_fruto": "correlacao_clima_fruto.html"
-    }
-
-    template = template_map.get(mode, "correlacao/correlacao_clima.html")
 
 
     if request.method == "GET":
-        return render_template(
-            template,
-            data_min=data_min,
-            data_max=data_max,
-            mode=mode
-        )
+        return render_template("correlacao/correlacao_clima_fruto.html")
 
-    # POST → calcular correlação
-    tipo1 = request.form.get("sensor1")
-    tipo2 = request.form.get("sensor2")
+    sensor = request.form.get("sensor")
+    atributo = request.form.get("atributo")
+    nome_fruto = request.form.get("nome_fruto")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
 
-    if not tipo1 or not tipo2:
+    if not sensor or not atributo:
         return render_template(
-            template,
-            aviso="Selecione os dois sensores.",
-            data_min=data_min,
-            data_max=data_max,
-            mode=mode
+            "correlacao_fruto_usuario.html",
+            aviso="Selecione sensor e atributo."
         )
 
-    leituras1 = LeituraDAO.get_dados_sensor(tipo1)
-    leituras2 = LeituraDAO.get_dados_sensor(tipo2)
+    # 🔹 COLETAS
+    coletas = ColetaFrutoDAO.listar_por_usuario(id)
 
-    if not leituras1 or not leituras2:
+    if nome_fruto:
+        coletas = [c for c in coletas if c.nome_fruto == nome_fruto]
+
+    if not coletas:
         return render_template(
-            template,
-            aviso="⚠ Sensores sem dados suficientes.",
-            data_min=data_min,
-            data_max=data_max,
-            mode=mode
+            "correlacao_fruto_usuario.html",
+            aviso="Sem coletas encontradas."
         )
 
-    df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
-    df2 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras2])
+    df_fruto = pd.DataFrame([
+        {
+            "timestamp": c.timestamp,
+            "valor_fruto": getattr(c, atributo)
+        }
+        for c in coletas if getattr(c, atributo) is not None
+    ])
 
-    df1["timestamp"] = pd.to_datetime(df1["timestamp"])
-    df2["timestamp"] = pd.to_datetime(df2["timestamp"])
+    if df_fruto.empty:
+        return render_template(
+            "correlacao_fruto_usuario.html",
+            aviso="Sem dados válidos de fruto."
+        )
 
+    df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
+
+    # 🔹 SENSOR
+    leituras = LeituraDAO.get_dados_sensor(sensor)
+
+    df_sensor = pd.DataFrame([
+        {
+            "timestamp": l.getTimestamp(),
+            "valor_sensor": l.getValor()
+        }
+        for l in leituras
+    ])
+
+    df_sensor["timestamp"] = pd.to_datetime(df_sensor["timestamp"])
+
+    # 🔹 FILTRO DATA
     if data_inicio and data_fim:
         data_inicio = pd.to_datetime(data_inicio)
         data_fim = pd.to_datetime(data_fim)
 
-        df1 = df1[(df1["timestamp"] >= data_inicio) & (df1["timestamp"] <= data_fim)]
-        df2 = df2[(df2["timestamp"] >= data_inicio) & (df2["timestamp"] <= data_fim)]
+        df_fruto = df_fruto[
+            (df_fruto["timestamp"] >= data_inicio) &
+            (df_fruto["timestamp"] <= data_fim)
+        ]
 
-    corre, _, _ = gerar_correlacao_sensor(tipo1, tipo2)
-    fig = grafico.grafico_correlacao(df1, df2)
-    graph_html = fig.to_html(full_html=False)
+        df_sensor = df_sensor[
+            (df_sensor["timestamp"] >= data_inicio) &
+            (df_sensor["timestamp"] <= data_fim)
+        ]
 
-    return render_template(
-        template,
-        graphHTML=graph_html,
-        correlacao=corre,
-        data_min=data_min,
-        data_max=data_max,
-        mode=mode
+    # 🔹 ALINHAMENTO TEMPORAL (CRÍTICO)
+    df_merged = pd.merge_asof(
+        df_fruto.sort_values("timestamp"),
+        df_sensor.sort_values("timestamp"),
+        on="timestamp",
+        direction="nearest"
     )
 
+    df_merged = df_merged.dropna()
 
+    if df_merged.empty:
+        return render_template(
+            "correlacao_fruto_usuario.html",
+            aviso="Sem dados compatíveis para correlação."
+        )
+
+    # 🔹 CORRELAÇÃO
+    correlacao = df_merged["valor_fruto"].corr(df_merged["valor_sensor"])
+
+    # 🔹 GRÁFICO
+    import plotly.express as px
+
+    fig = px.scatter(
+        df_merged,
+        x="valor_sensor",
+        y="valor_fruto",
+        title="Correlação Sensor × Fruto"
+    )
+
+    graphHTML = fig.to_html(full_html=False)
+
+    return render_template(
+        "correlacao_fruto_usuario.html",
+        correlacao=round(correlacao, 4),
+        graphHTML=graphHTML
+    )
 # ===========================
 # DEBUG
 # ===========================
@@ -228,15 +261,15 @@ def corre_clima_page():
     return render_template("correlacao_clima.html")
 
 
-@leitura_bp.route("/correlacao/frutos", methods=["GET"])
-def corre_frutos_page():
-    return render_template("correlacao_frutos.html")
+@leitura_bp.route("/correlacao/climaFruto", methods=["GET"])
+def corre_clima_fruto_page():
+    return render_template("correlacao_clima_fruto.html")
 
 
 @leitura_bp.route("/correlacao/user", methods=["GET", "POST"])
 def correlacao_usuario():
 
-    from modelo.modelsDB import ColetaFruto
+    from modelo.coletaFruto import ColetaFruto
     import pandas as pd
 
     # 🔒 segurança

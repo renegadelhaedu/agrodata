@@ -1,14 +1,23 @@
 from modelo.leitura import Leitura
-from modelo.modelsDB import *
+from modelo.usuario import *
 from datetime import datetime
+from utils import TipoSensor
 
 
 class LeituraDAO:
     @staticmethod
     def salvar(sensor_id, tipo, valor):
+
+        tipos_validos = [t.value for t in TipoSensor]
+
+        if tipo not in tipos_validos:
+            raise ValueError("Tipo inválido")
+
         leitura = Leitura(sensor_id=sensor_id, tipo=tipo, valor=valor)
+
         db.session.add(leitura)
         db.session.commit()
+
         return leitura
 
     @staticmethod
@@ -66,41 +75,30 @@ class LeituraDAO:
         db.session.commit()
         return True
 
-
-
-    def buscar_por_email(email):
-        return Usuario.query.filter_by(email=email).first()
-
     @staticmethod
-    def autenticar(email, senha):
-        return Usuario.query.filter_by(email=email, senha=senha).first()
+    def filtrar(sensor_id=None, tipo=None, valor_min=None, valor_max=None, data_inicio=None, data_fim=None):
+        query = Leitura.query
 
-    @staticmethod
-    def listar_todos():
-        return Usuario.query.all()
+        if sensor_id:
+            query = query.filter(Leitura.sensor_id == sensor_id)
 
-    @staticmethod
-    def aprovar_usuario(id_usuario):
-        user = Usuario.query.get(id_usuario)
-        if not user:
-            return False
-        user.aprovado = 1
-        db.session.commit()
-        return True
+        if tipo:
+            query = query.filter(Leitura.tipo == tipo)
 
-    @staticmethod
-    def listar_pendentes():
-        return Usuario.query.filter_by(aprovado=False).all()
+        if valor_min is not None:
+            query = query.filter(Leitura.valor >= valor_min)
 
-    @staticmethod
-    def listar_aprovados():
-        return Usuario.query.filter_by(aprovado=True).all()
+        if valor_max is not None:
+            query = query.filter(Leitura.valor <= valor_max)
 
-    @staticmethod
-    def deletar(id_usuario):
-        user = Usuario.query.get(id_usuario)
-        if not user:
-            return False
-        db.session.delete(user)
-        db.session.commit()
-        return True
+        if data_inicio:
+            query = query.filter(Leitura.timestamp >= data_inicio)
+
+        if data_fim:
+            query = query.filter(Leitura.timestamp <= data_fim)
+
+        return query.order_by(Leitura.timestamp.desc()).all()
+
+
+
+

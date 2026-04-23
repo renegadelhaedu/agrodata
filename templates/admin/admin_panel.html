@@ -12,18 +12,39 @@
 
 <nav>
     <ul>
-        <li><a href="/">Página Inicial</a></li>
-
         <li><a href="{{ url_for('admin_bp.admin_usuarios') }}">Usuários Ativos</a></li>
         <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
-
         <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
+        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">Gráfico</a></li>
+        <li><a href="{{ url_for('admin_bp.admin_logout', tipo='temperatura_ar') }}">Sair</a></li>
 
-        <li><a href="{{ url_for('admin_bp.admin_logout') }}">Sair</a></li>
     </ul>
 </nav>
 
-<p>Gerenciamento de Leituras</p>
+<form class="filter-form" method="GET" action="{{ url_for('admin_bp.filtrar_leituras') }}">
+
+    <label>Início:</label>
+    <input type="datetime-local" name="data_inicio"
+           value="{{ request.args.get('data_inicio', '') }}">
+
+    <label>Fim:</label>
+    <input type="datetime-local" name="data_fim"
+           value="{{ request.args.get('data_fim', '') }}">
+
+    <label>Tipo:</label>
+    <select name="tipo">
+        <option value="">Todos</option>
+
+        {% for s in sensores %}
+            <option value="{{ s }}"
+                {% if request.args.get('tipo') == s %}selected{% endif %}>
+                {{ s }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filtrar</button>
+</form>
 
 <table>
     <tr>

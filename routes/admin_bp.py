@@ -2,11 +2,13 @@ from flask import Blueprint, request,  render_template,  redirect, url_for, flas
 from dao.leituraDAO import LeituraDAO
 from werkzeug.security import check_password_hash
 from modelo.leitura import Leitura
-from modelo.modelsDB import Admin
-from dao.banco import db
+from modelo.admin import Admin
+from banco import db
 from decorators import admin_required
 from dao.usuarioDAO import UsuarioDAO
 from flask_login import login_user, logout_user, login_required
+from datetime import datetime, timedelta
+from utils import lista_sensores
 
 
 admin_bp = Blueprint("admin_bp", __name__)
@@ -157,4 +159,61 @@ def recusar_usuario(id):
     UsuarioDAO.deletar(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
+@login_required
+@admin_required
+@admin_bp.route("/filtrar", methods=["GET"])
+def filtrar_leituras():
+
+    sensor_id = request.args.get("sensor_id")
+    tipo = request.args.get("tipo")
+    valor_min = request.args.get("valor_min")
+    valor_max = request.args.get("valor_max")
+    data_inicio = request.args.get("data_inicio")
+    data_fim = request.args.get("data_fim")
+
+    # Conversão de datas (ISO esperado)
+    try:
+        data_inicio = datetime.fromisoformat(data_inicio) if data_inicio else None
+    except Exception:
+        data_inicio = None
+
+    try:
+        data_fim = datetime.fromisoformat(data_fim) if data_fim else None
+    except Exception:
+        data_fim = None
+
+    if data_fim:
+        data_fim = data_fim.replace(second=59, microsecond=999999)
+
+    # Conversão numérica segura
+    try:
+        valor_min = float(valor_min) if valor_min else None
+    except Exception:
+        valor_min = None
+
+    try:
+        valor_max = float(valor_max) if valor_max else None
+    except Exception:
+        valor_max = None
+
+
+
+    try:
+        leituras = LeituraDAO.filtrar(
+            sensor_id=sensor_id,
+            tipo=tipo,
+            valor_min=valor_min,
+            valor_max=valor_max,
+            data_inicio=data_inicio,
+            data_fim=data_fim
+        )
+    except ValueError:
+        # fallback seguro se tipo for inválido
+        leituras = []
+
+    return render_template(
+        "admin/admin_panel.html",
+        leituras=leituras,
+        sensores=lista_sensores
+    )
 

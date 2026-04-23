@@ -1,4 +1,4 @@
-from dao.banco import db
+from banco import db
 from datetime import datetime
 from zoneinfo import ZoneInfo
 

@@ -1,5 +1,5 @@
-from dao.banco import db
-from modelo.modelsDB import Usuario
+from banco import db
+from modelo.usuario import Usuario
 
 
 class UsuarioDAO:

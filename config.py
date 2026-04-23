@@ -4,7 +4,8 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    from modelo.modelsDB import Admin, Usuario
+    from modelo.admin import Admin
+    from modelo.usuario import Usuario
     try:
         tipo_usuario, id_numerico = user_id.split('_')
         id_numerico = int(id_numerico)

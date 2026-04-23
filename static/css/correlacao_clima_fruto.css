@@ -2,16 +2,14 @@ body {
     font-family: Arial, sans-serif;
     background: #eef6ff;
     margin: 0;
-    padding: 0;
     color: #333;
 }
 
 header {
-    background: #3949ab;
+    background: #2e7d32;
     color: white;
-    padding: 25px;
+    padding: 20px;
     text-align: center;
-    box-shadow: 0 2px 5px #0003;
 }
 
 main {
@@ -28,11 +26,6 @@ main {
     border-radius: 6px;
     text-decoration: none;
     margin-bottom: 20px;
-    transition: 0.3s;
-}
-
-.btn-voltar:hover {
-    background: #333;
 }
 
 .form-corre {
@@ -48,46 +41,35 @@ main {
 
 .campo label {
     font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
 }
 
 .campo select,
-.campo input[type="date"] {
+.campo input {
     width: 100%;
     padding: 8px;
-    border: 1px solid #bbb;
     border-radius: 6px;
+    border: 1px solid #bbb;
 }
 
 .btn-gerar {
     width: 100%;
     padding: 12px;
-    background: #3949ab;
+    background: #2e7d32;
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s;
-}
-
-.btn-gerar:hover {
-    background: #283593;
 }
 
 .resultado {
-    margin-top: 30px;
+    margin-top: 20px;
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px #0002;
 }
 
 .aviso {
-    background: #ffdfdf;
-    border-left: 4px solid #b30000;
-    color: #600;
+    background: #ffdddd;
     padding: 10px;
-    border-radius: 6px;
+    border-left: 4px solid red;
 }

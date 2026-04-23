@@ -2,79 +2,79 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Correlação Personalizada</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_frutos.css') }}">
+    <title>Correlação Sensor × Fruto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_clima_fruto.css') }}">
 </head>
 <body>
 
 <header>
-    <h1>📊 Correlação Personalizada</h1>
-    <p>Relacione um sensor com seus dados de fruta</p>
+    <h1>📊 Correlação Sensor × Fruto</h1>
+    <p>Selecione suas coletas e correlacione com sensores</p>
 </header>
 
 <main>
 
     <a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">
-        ⬅️ Voltar ao Painel
+        ⬅️ Voltar
     </a>
 
-    <!-- 🔥 FORM CORRIGIDO -->
-    <form action="{{ url_for('leitura_bp.correlacao_usuario') }}" method="POST" class="form-corre">
+    <form method="POST" class="form-corre">
 
         <!-- SENSOR -->
         <div class="campo">
             <label>Sensor:</label>
             <select name="sensor" required>
                 <option value="">-- Escolha --</option>
-                <option value="temperatura_ar" {{ 'selected' if request.form.get('sensor') == 'temperatura_ar' else '' }}>Temperatura do Ar</option>
-                <option value="umidade_ar" {{ 'selected' if request.form.get('sensor') == 'umidade_ar' else '' }}>Umidade do Ar</option>
-                <option value="umidade_solo" {{ 'selected' if request.form.get('sensor') == 'umidade_solo' else '' }}>Umidade do Solo</option>
-                <option value="rad_solar" {{ 'selected' if request.form.get('sensor') == 'rad_solar' else '' }}>Radiação Solar</option>
+                <option value="temperatura_ar">Temperatura do Ar</option>
+                <option value="umidade_ar">Umidade do Ar</option>
+                <option value="umidade_solo">Umidade do Solo</option>
+                <option value="rad_solar">Radiação Solar</option>
             </select>
         </div>
 
         <!-- ATRIBUTO -->
         <div class="campo">
-            <label>Atributo da fruta:</label>
+            <label>Atributo do fruto:</label>
             <select name="atributo" required>
                 <option value="">-- Escolha --</option>
-                <option value="frutose" {{ 'selected' if request.form.get('atributo') == 'frutose' else '' }}>Frutose</option>
-                <option value="peso" {{ 'selected' if request.form.get('atributo') == 'peso' else '' }}>Peso</option>
-                <option value="tamanho" {{ 'selected' if request.form.get('atributo') == 'tamanho' else '' }}>Tamanho</option>
-                <option value="acidez" {{ 'selected' if request.form.get('atributo') == 'acidez' else '' }}>Acidez</option>
+                <option value="frutose">Frutose</option>
+                <option value="peso">Peso</option>
+                <option value="tamanho">Tamanho</option>
+                <option value="acidez">Acidez</option>
             </select>
+        </div>
+
+        <!-- FILTRO POR FRUTO -->
+        <div class="campo">
+            <label>Filtrar por fruta (opcional):</label>
+            <input type="text" name="nome_fruto" placeholder="Ex: coco">
         </div>
 
         <!-- DATAS -->
         <div class="campo">
             <label>Data início:</label>
-            <input type="date" name="data_inicio" value="{{ request.form.get('data_inicio', '') }}">
+            <input type="date" name="data_inicio">
         </div>
 
         <div class="campo">
             <label>Data fim:</label>
-            <input type="date" name="data_fim" value="{{ request.form.get('data_fim', '') }}">
+            <input type="date" name="data_fim">
         </div>
 
         <button type="submit" class="btn-gerar">Gerar Correlação</button>
-
     </form>
 
-    <!-- AVISOS -->
     {% if aviso %}
         <p class="aviso">{{ aviso }}</p>
     {% endif %}
 
-    <!-- RESULTADO -->
     {% if correlacao %}
         <section class="resultado">
             <h3>Correlação: {{ correlacao }}</h3>
 
-            {% if graphHTML %}
-                <div class="grafico">
-                    {{ graphHTML | safe }}
-                </div>
-            {% endif %}
+            <div class="grafico">
+                {{ graphHTML | safe }}
+            </div>
         </section>
     {% endif %}
 

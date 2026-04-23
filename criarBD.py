@@ -1,8 +1,5 @@
-from dao.coletaFrutoDao import *
-import utils
-import time
 import app
-from dao.banco import db
+from banco import db
 
 app = app.app
 
