@@ -15,7 +15,7 @@
         <li><a href="{{ url_for('admin_bp.admin_usuarios') }}">Usuários Ativos</a></li>
         <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
         <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
-        <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">Gráfico</a></li>
+        <li><a href="{{ url_for('admin_bp.grafico_filtrado') }}">Gráfico</a></li>
         <li><a href="{{ url_for('admin_bp.admin_logout', tipo='temperatura_ar') }}">Sair</a></li>
 
     </ul>
@@ -48,7 +48,7 @@
 
 <table>
     <tr>
-        <th>ID</th>
+        <th>Contagem</th>
         <th>Sensor</th>
         <th>Tipo</th>
         <th>Valor</th>

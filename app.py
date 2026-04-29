@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from dao.leituraDAO import LeituraDAO
 from routes.admin_bp import *
-from routes.leitura_routes import leitura_bp
+from routes.leitura_bp import leitura_bp
 from config import Config
 from grafico import grafico
 from analise.analisador import *

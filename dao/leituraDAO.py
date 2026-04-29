@@ -99,6 +99,22 @@ class LeituraDAO:
 
         return query.order_by(Leitura.timestamp.desc()).all()
 
+    @staticmethod
+    def filtrar_por_periodo(data_inicio, data_fim, tipo):
+
+        query = Leitura.query
+
+        if tipo:
+            query = query.filter(Leitura.tipo == tipo)
+
+        if data_inicio:
+            query = query.filter(Leitura.timestamp >= data_inicio)
+
+        if data_fim:
+            query = query.filter(Leitura.timestamp <= data_fim)
+
+        return query.order_by(Leitura.timestamp.asc()).all()
+
 
 
 

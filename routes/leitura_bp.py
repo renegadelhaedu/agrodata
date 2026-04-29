@@ -1,14 +1,32 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
 from flask_login import login_required
-
 from dao.leituraDAO import LeituraDAO
 from dao.coletaFrutoDao import ColetaFrutoDAO
 from decorators import admin_required
 from grafico import grafico
+from flask_login import current_user
+import plotly.express as px
 import pandas as pd
 
 
 leitura_bp = Blueprint("leitura_bp", __name__)
+
+@leitura_bp.route('/receber')
+def receber_dados_sensores():
+    umidade_ar = request.args.get('umidade_ar')
+    temperatura_ar = request.args.get('temperatura_ar')
+    umidade_solo = request.args.get('umidade_solo')
+    uv = request.args.get('uv')
+    print(umidade_ar)
+    print(temperatura_ar)
+    print(umidade_solo)
+    print(uv)
+    LeituraDAO.salvar(sensor_id=1,tipo='umidade_ar', valor=umidade_ar)
+    LeituraDAO.salvar(sensor_id=2, tipo='temperatura_ar', valor=temperatura_ar)
+    LeituraDAO.salvar(sensor_id=3, tipo='umidade_solo', valor=umidade_solo)
+    LeituraDAO.salvar(sensor_id=4, tipo='radiacao_uv', valor=uv)
+
+    return jsonify("deu certo"), 201
 
 
 @leitura_bp.route("/api/leituras", methods=["POST"])
@@ -56,12 +74,16 @@ def view_grafico(tipo):
     fig = grafico.gerar_graf(leituras, tipo)
     graph_html = fig.to_html(full_html=False)
 
-    return render_template("grafico.html", graphHTML=graph_html)
+    return render_template("usuario/grafico.html", graphHTML=graph_html)
+
+
 
 
 # ===========================
 # CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
+
+@login_required
 @leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
 def pagina_correlacao_clima():
 
@@ -133,37 +155,64 @@ def pagina_correlacao_clima():
     )
 
 
+@leitura_bp.route("/selecionar-fruto")
+@login_required
+def selecionar_fruto():
+
+    todas = ColetaFrutoDAO.listar_por_usuario(current_user.id)
+    frutos = list(set([c.nome_fruto for c in todas]))
+
+    return render_template("correlacao/selecionar_fruto.html", frutos=frutos)
+
+from flask_login import login_required, current_user
+from flask import render_template, request
+import pandas as pd
+import plotly.express as px
+
 
 @leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
+@login_required
 def pagina_correlacao_fruto():
 
+    frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
 
+    # 🔹 pega parâmetros da URL (quando vem do modal)
+    nome_fruto = request.args.get("fruto")
+    atributo = request.args.get("atributo")
 
     if request.method == "GET":
-        return render_template("correlacao/correlacao_clima_fruto.html")
+        return render_template(
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            nome_fruto=nome_fruto,
+            atributo=atributo
+        )
 
+    # 🔹 POST
     sensor = request.form.get("sensor")
     atributo = request.form.get("atributo")
     nome_fruto = request.form.get("nome_fruto")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
 
-    if not sensor or not atributo:
+    if not sensor or not atributo or not nome_fruto:
         return render_template(
-            "correlacao_fruto_usuario.html",
-            aviso="Selecione sensor e atributo."
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Selecione todos os campos obrigatórios."
         )
 
     # 🔹 COLETAS
-    coletas = ColetaFrutoDAO.listar_por_usuario(id)
-
-    if nome_fruto:
-        coletas = [c for c in coletas if c.nome_fruto == nome_fruto]
+    coletas = [
+        c for c in ColetaFrutoDAO.listar_por_usuario(current_user.id)
+        if c.nome_fruto == nome_fruto
+    ]
 
     if not coletas:
         return render_template(
-            "correlacao_fruto_usuario.html",
-            aviso="Sem coletas encontradas."
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Sem coletas para esse fruto."
         )
 
     df_fruto = pd.DataFrame([
@@ -173,12 +222,6 @@ def pagina_correlacao_fruto():
         }
         for c in coletas if getattr(c, atributo) is not None
     ])
-
-    if df_fruto.empty:
-        return render_template(
-            "correlacao_fruto_usuario.html",
-            aviso="Sem dados válidos de fruto."
-        )
 
     df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
 
@@ -210,42 +253,32 @@ def pagina_correlacao_fruto():
             (df_sensor["timestamp"] <= data_fim)
         ]
 
-    # 🔹 ALINHAMENTO TEMPORAL (CRÍTICO)
+    # 🔴 ALINHAMENTO
     df_merged = pd.merge_asof(
         df_fruto.sort_values("timestamp"),
         df_sensor.sort_values("timestamp"),
         on="timestamp",
         direction="nearest"
-    )
-
-    df_merged = df_merged.dropna()
+    ).dropna()
 
     if df_merged.empty:
         return render_template(
-            "correlacao_fruto_usuario.html",
-            aviso="Sem dados compatíveis para correlação."
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Sem dados compatíveis."
         )
 
-    # 🔹 CORRELAÇÃO
     correlacao = df_merged["valor_fruto"].corr(df_merged["valor_sensor"])
 
-    # 🔹 GRÁFICO
-    import plotly.express as px
-
-    fig = px.scatter(
-        df_merged,
-        x="valor_sensor",
-        y="valor_fruto",
-        title="Correlação Sensor × Fruto"
-    )
-
-    graphHTML = fig.to_html(full_html=False)
+    fig = px.scatter(df_merged, x="valor_sensor", y="valor_fruto")
 
     return render_template(
-        "correlacao_fruto_usuario.html",
+        "correlacao/correlacao_clima_fruto.html",
+        frutos=frutos,
         correlacao=round(correlacao, 4),
-        graphHTML=graphHTML
+        graphHTML=fig.to_html(full_html=False)
     )
+
 # ===========================
 # DEBUG
 # ===========================

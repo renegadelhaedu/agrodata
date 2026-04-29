@@ -4,10 +4,10 @@ from modelo.coletaFruto import *
 class ColetaFrutoDAO:
 
     @staticmethod
-    def criar(usuario_id,nome_fruto, frutose, peso, tamanho, acidez, timestamp):
+    def criar(usuario_id, nome_fruto, frutose, peso, tamanho, acidez, timestamp):
         coleta = ColetaFruto(
             usuario_id=usuario_id,
-            nome_fruto=nome_fruto,
+            nome_fruto=nome_fruto.strip().lower(),
             frutose=frutose,
             peso=peso,
             tamanho=tamanho,
@@ -23,18 +23,11 @@ class ColetaFrutoDAO:
         return ColetaFruto.query.filter_by(usuario_id=usuario_id).all()
 
     @staticmethod
-    def listar_por_fruto(nome_fruto):
-        return ColetaFruto.query.filter_by(nome_fruto=nome_fruto).all()
+    def listar_frutos_unicos(usuario_id):
+        coletas = ColetaFrutoDAO.listar_por_usuario(usuario_id)
 
-    @staticmethod
-    def listar_todas():
-        return ColetaFruto.query.all()
-
-    @staticmethod
-    def deletar(id):
-        coleta = ColetaFruto.query.get(id)
-        if not coleta:
-            return False
-        db.session.delete(coleta)
-        db.session.commit()
-        return True
+        return sorted(list(set(
+            c.nome_fruto.strip().lower()
+            for c in coletas
+            if c.nome_fruto
+        )))

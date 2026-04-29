@@ -7,8 +7,10 @@ from banco import db
 from decorators import admin_required
 from dao.usuarioDAO import UsuarioDAO
 from flask_login import login_user, logout_user, login_required
-from datetime import datetime, timedelta
+from datetime import datetime
 from utils import lista_sensores
+from grafico import grafico
+
 
 
 admin_bp = Blueprint("admin_bp", __name__)
@@ -217,3 +219,47 @@ def filtrar_leituras():
         sensores=lista_sensores
     )
 
+
+@login_required
+@admin_required
+@admin_bp.route("/grafico-filtrado", methods=["GET"])
+def grafico_filtrado():
+
+    from datetime import datetime
+
+    sensores = ["temperatura_ar", "umidade_ar", "umidade_solo", "rad_solar"]
+
+    tipo = request.args.get("tipo")
+    data_inicio = request.args.get("data_inicio")
+    data_fim = request.args.get("data_fim")
+
+    graphHTML = None
+    aviso = None
+
+    if tipo:
+
+        query = Leitura.query.filter(Leitura.tipo == tipo)
+
+        # 🔹 filtro por data direto no banco (correto)
+        if data_inicio:
+            data_inicio = datetime.fromisoformat(data_inicio)
+            query = query.filter(Leitura.timestamp >= data_inicio)
+
+        if data_fim:
+            data_fim = datetime.fromisoformat(data_fim)
+            query = query.filter(Leitura.timestamp <= data_fim)
+
+        leituras = query.order_by(Leitura.timestamp.asc()).all()
+
+        if not leituras:
+            aviso = "⚠ Nenhum dado encontrado para esse filtro."
+        else:
+            fig = grafico.gerar_graf(leituras, tipo)
+            graphHTML = fig.to_html(full_html=False)
+
+    return render_template(
+        "admin/graficoc.html",
+        sensores=sensores,
+        graphHTML=graphHTML,
+        aviso=aviso
+    )

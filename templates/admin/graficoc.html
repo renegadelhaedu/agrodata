@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico por Período</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>📊 Gerar Gráfico por Período</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/admin">⬅️ Voltar</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<form method="GET" class="filter-form">
+
+    <label>Sensor:</label>
+    <select name="tipo" required>
+        <option value="">-- Escolha --</option>
+        {% for s in sensores %}
+            <option value="{{ s }}" {% if request.args.get('tipo') == s %}selected{% endif %}>
+                {{ s }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Data início:</label>
+    <input type="datetime-local" name="data_inicio"
+           value="{{ request.args.get('data_inicio', '') }}">
+
+    <label>Data fim:</label>
+    <input type="datetime-local" name="data_fim"
+           value="{{ request.args.get('data_fim', '') }}">
+
+    <button type="submit">Gerar Gráfico</button>
+
+</form>
+
+{% if aviso %}
+    <p class="aviso">{{ aviso }}</p>
+{% endif %}
+
+{% if graphHTML %}
+    <div class="grafico">
+        {{ graphHTML | safe }}
+    </div>
+{% endif %}
+
+</main>
+
+</body>
+</html>

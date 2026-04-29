@@ -1,84 +1,104 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Correlação Sensor × Fruto</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_clima_fruto.css') }}">
+<meta charset="UTF-8">
+<title>Correlação Sensor × Fruto</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/correlacao_clima_fruto.css') }}">
+
+<style>
+.modal {
+    display:none;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+}
+.modal-content {
+    background:white;
+    margin:100px auto;
+    padding:20px;
+    width:300px;
+    border-radius:10px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1>📊 Correlação Sensor × Fruto</h1>
-    <p>Selecione suas coletas e correlacione com sensores</p>
+<h1>Correlação Sensor × Fruto</h1>
 </header>
 
 <main>
 
-    <a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">
-        ⬅️ Voltar
-    </a>
+<form method="POST">
 
-    <form method="POST" class="form-corre">
+<label>Sensor:</label>
+<select name="sensor" required>
+<option value="">--Escolha--</option>
+<option value="temperatura_ar">Temperatura</option>
+<option value="umidade_ar">Umidade Ar</option>
+<option value="umidade_solo">Umidade Solo</option>
+<option value="rad_solar">Radiação</option>
+</select>
 
-        <!-- SENSOR -->
-        <div class="campo">
-            <label>Sensor:</label>
-            <select name="sensor" required>
-                <option value="">-- Escolha --</option>
-                <option value="temperatura_ar">Temperatura do Ar</option>
-                <option value="umidade_ar">Umidade do Ar</option>
-                <option value="umidade_solo">Umidade do Solo</option>
-                <option value="rad_solar">Radiação Solar</option>
-            </select>
-        </div>
+<label>Fruto:</label>
+<input type="text" id="campoFruto" name="nome_fruto"
+       readonly onclick="abrirModal()"
+       value="{{ nome_fruto or '' }}">
 
-        <!-- ATRIBUTO -->
-        <div class="campo">
-            <label>Atributo do fruto:</label>
-            <select name="atributo" required>
-                <option value="">-- Escolha --</option>
-                <option value="frutose">Frutose</option>
-                <option value="peso">Peso</option>
-                <option value="tamanho">Tamanho</option>
-                <option value="acidez">Acidez</option>
-            </select>
-        </div>
+<label>Atributo:</label>
+<select name="atributo" id="campoAtributo">
+<option value="">--Escolha--</option>
+<option value="frutose">Frutose</option>
+<option value="peso">Peso</option>
+<option value="tamanho">Tamanho</option>
+<option value="acidez">Acidez</option>
+</select>
 
-        <!-- FILTRO POR FRUTO -->
-        <div class="campo">
-            <label>Filtrar por fruta (opcional):</label>
-            <input type="text" name="nome_fruto" placeholder="Ex: coco">
-        </div>
+<button type="submit">Gerar</button>
 
-        <!-- DATAS -->
-        <div class="campo">
-            <label>Data início:</label>
-            <input type="date" name="data_inicio">
-        </div>
+</form>
 
-        <div class="campo">
-            <label>Data fim:</label>
-            <input type="date" name="data_fim">
-        </div>
-
-        <button type="submit" class="btn-gerar">Gerar Correlação</button>
-    </form>
-
-    {% if aviso %}
-        <p class="aviso">{{ aviso }}</p>
-    {% endif %}
-
-    {% if correlacao %}
-        <section class="resultado">
-            <h3>Correlação: {{ correlacao }}</h3>
-
-            <div class="grafico">
-                {{ graphHTML | safe }}
-            </div>
-        </section>
-    {% endif %}
+{% if graphHTML %}
+{{ graphHTML | safe }}
+{% endif %}
 
 </main>
+
+<!-- MODAL -->
+<div id="modalFruto" class="modal">
+<div class="modal-content">
+
+<h3>Escolha o fruto</h3>
+
+{% for f in frutos %}
+<button onclick="selecionarFruto('{{ f }}')">{{ f }}</button>
+{% endfor %}
+
+</div>
+</div>
+
+<script>
+let frutoSelecionado = null;
+
+function abrirModal(){
+document.getElementById("modalFruto").style.display="block";
+}
+
+function selecionarFruto(fruto){
+frutoSelecionado = fruto;
+document.getElementById("campoFruto").value = fruto;
+
+document.getElementById("modalFruto").style.display="none";
+
+let atributo = prompt("Escolha: frutose, peso, tamanho, acidez");
+
+window.location.href =
+"/correlacao-fruto-usuario?fruto="+fruto+"&atributo="+atributo;
+}
+</script>
 
 </body>
 </html>
