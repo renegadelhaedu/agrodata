@@ -13,3 +13,4 @@ class TipoFruta(Enum):
     CAJU = 'cajú'
 
 lista_frutos = [fruta.value for fruta in TipoFruta]
+lista_sensores = [sensor.value for sensor in TipoSensor]

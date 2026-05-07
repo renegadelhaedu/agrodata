@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 from dao.leituraDAO import *
-from dao.banco import db
 from routes.admin_bp import admin_bp
 from routes.leitura_routes import leitura_bp
 from config import Config
@@ -11,11 +10,14 @@ import time
 import utils
 import threading
 from routes.usuario_bp import user_bp
+from config import login_manager
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
+login_manager.init_app(app)
+login_manager.login_view = 'home'
 
 with app.app_context():
     db.create_all()
