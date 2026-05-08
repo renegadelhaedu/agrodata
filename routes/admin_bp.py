@@ -13,6 +13,9 @@ from grafico import grafico
 
 
 
+
+
+
 admin_bp = Blueprint("admin_bp", __name__)
 
 @login_required
@@ -263,3 +266,5 @@ def grafico_filtrado():
         graphHTML=graphHTML,
         aviso=aviso
     )
+
+
