@@ -1,5 +1,4 @@
-from flask import Flask, render_template
-from dao.leituraDAO import LeituraDAO
+from flask import Flask
 from routes.admin_bp import *
 from routes.leitura_bp import leitura_bp
 from config import Config
@@ -12,8 +11,9 @@ import random
 from datetime import datetime, timedelta
 from routes.usuario_bp import user_bp
 from config import login_manager
-from utils import TipoSensor
+from utils import TipoSensor, TipoFruta
 from banco import db
+
 
 
 app = Flask(__name__)
@@ -60,22 +60,14 @@ def preencher_via_url():
     return f"Inserido: {tipo} | {sensor_id} | {valor}", 200
 
 
-def preencher():
-    valor = 27
-    for i in range(10):
-        LeituraDAO.salvar('1', utils.TipoSensor.TEMPERATURA_AR.value, valor)
-        valor = valor * 1.2
-        time.sleep(20)
+
 
 @app.route("/")
 def home():
     return render_template('homepage.html')
 
 
-@app.route('/testar')
-def testar():
-    threading.Thread(target=preencher).start()
-    return 'ok', 200
+
 
 
 @app.route('/ok')
@@ -95,21 +87,50 @@ def debug_leituras():
 
 #rota para gerar um monte de dados
 
+
 @app.route("/popular")
 def popular():
 
+
     sensores = [
         ("1", TipoSensor.TEMPERATURA_AR),
-        ("1", TipoSensor.UMIDADE_AR),
-        ("2", TipoSensor.UMIDADE_SOLO)
+        ("2", TipoSensor.UMIDADE_AR),
+        ("3", TipoSensor.UMIDADE_SOLO),
+        ("4", TipoSensor.RADIACAO)
+    ]
+
+    frutos = [
+        TipoFruta.ACEROLA,
+        TipoFruta.MANGA,
+        TipoFruta.COCO,
+        TipoFruta.CAJU
     ]
 
     agora = datetime.now()
 
-    for i in range(100):
+    # =========================================
+    # SENSORES
+    # =========================================
+
+    for i in range(200):
+
+        # dias passados
+        base = agora - timedelta(days=i)
+
         for sensor_id, tipo_enum in sensores:
 
-            # valores coerentes por tipo
+            # horário aleatório
+            hora = random.randint(0, 23)
+            minuto = random.randint(0, 59)
+
+            data_sensor = base.replace(
+                hour=hora,
+                minute=minuto,
+                second=0,
+                microsecond=0
+            )
+
+            # valores coerentes
             if tipo_enum == TipoSensor.TEMPERATURA_AR:
                 valor = random.uniform(20, 35)
 
@@ -119,20 +140,61 @@ def popular():
             elif tipo_enum == TipoSensor.UMIDADE_SOLO:
                 valor = random.uniform(20, 80)
 
+            elif tipo_enum == TipoSensor.RADIACAO:
+                valor = random.uniform(15, 87)
+
             leitura = Leitura(
                 sensor_id=sensor_id,
                 tipo=tipo_enum.value,
                 valor=round(valor, 2)
             )
 
-            # 🔥 AQUI está a correção
-            leitura.timestamp = agora - timedelta(minutes=i * 10)
+            leitura.timestamp = data_sensor
 
             db.session.add(leitura)
+
+    # =========================================
+    # FRUTOS
+    # =========================================
+
+    for i in range(200):
+
+        base = agora - timedelta(days=i)
+
+        for fruto in frutos:
+
+            # horário diferente do sensor
+            hora = random.randint(0, 23)
+            minuto = random.randint(0, 59)
+
+            data_fruto = base.replace(
+                hour=hora,
+                minute=minuto,
+                second=0,
+                microsecond=0
+            )
+
+            coleta = ColetaFruto(
+                usuario_id=1,
+                nome_fruto=fruto.value,
+
+                frutose=round(random.uniform(5, 20), 2),
+
+                peso=round(random.uniform(100, 900), 2),
+
+                tamanho=round(random.uniform(4, 20), 2),
+
+                acidez=round(random.uniform(2, 7), 2)
+            )
+
+            coleta.timestamp = data_fruto
+
+            db.session.add(coleta)
 
     db.session.commit()
 
     return "Banco populado com sucesso", 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

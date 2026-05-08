@@ -24,10 +24,27 @@ class ColetaFrutoDAO:
 
     @staticmethod
     def listar_frutos_unicos(usuario_id):
-        coletas = ColetaFrutoDAO.listar_por_usuario(usuario_id)
+        resultados = (
+            db.session.query(ColetaFruto.nome_fruto)
+            .filter(ColetaFruto.usuario_id == usuario_id)
+            .distinct()
+            .all()
+        )
 
-        return sorted(list(set(
-            c.nome_fruto.strip().lower()
-            for c in coletas
-            if c.nome_fruto
-        )))
+        return [r[0] for r in resultados]
+
+    @staticmethod
+    def deletar(id_coleta, usuario_id):
+
+        coleta = ColetaFruto.query.filter_by(
+            id=id_coleta,
+            usuario_id=usuario_id
+        ).first()
+
+        if not coleta:
+            return False
+
+        db.session.delete(coleta)
+        db.session.commit()
+
+        return True

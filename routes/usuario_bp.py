@@ -80,7 +80,7 @@ def logout():
 def cadastrar_coleta():
 
     if request.method == "POST":
-        print('id do usuario:', current_user.get_id())
+        print('id do usuario:', current_user.id)
         try:
             nome_fruto = request.form["nome_fruto"]
             frutose = float(request.form["frutose"])
@@ -96,7 +96,7 @@ def cadastrar_coleta():
             return redirect(url_for("user_bp.cadastrar_coleta"))
 
         ColetaFrutoDAO.criar(
-            usuario_id=current_user.get_id(),
+            usuario_id=current_user.id,
             nome_fruto=nome_fruto,
             frutose=frutose,
             peso=peso,
@@ -113,12 +113,27 @@ def cadastrar_coleta():
 @login_required
 @user_bp.route("/minhascoletas")
 def listar_coletas():
-    coletas = ColetaFrutoDAO.listar_por_usuario(current_user.get_id())
 
-    print("COLETAS DO USUARIO:", coletas)  # DEBUG
+    print("CURRENT USER:", current_user.id)
 
-    return render_template("usuario/coletas_usuario.html", coletas=coletas)
+    coletas = ColetaFrutoDAO.listar_por_usuario(
+        current_user.id
+    )
 
+    print("COLETAS:", coletas)
+
+    for c in coletas:
+
+        print(
+            c.id,
+            c.nome_fruto,
+            c.usuario_id
+        )
+
+    return render_template(
+        "usuario/coletas_usuario.html",
+        coletas=coletas
+    )
 @login_required
 @user_bp.route("/debug/coletas")
 def debug_coletas():
@@ -127,3 +142,20 @@ def debug_coletas():
         f"ID:{c.id} | USER:{c.usuario_id} | DATA:{c.timestamp}"
         for c in coletas
     ])
+
+
+@login_required
+@user_bp.route("/coleta/excluir/<int:id_coleta>", methods=["POST"])
+def excluir_coleta(id_coleta):
+
+    sucesso = ColetaFrutoDAO.deletar(
+        id_coleta=id_coleta,
+        usuario_id=current_user.id
+    )
+
+    if sucesso:
+        flash("Coleta excluída com sucesso")
+    else:
+        flash("Coleta não encontrada")
+
+    return redirect(url_for("user_bp.listar_coletas"))

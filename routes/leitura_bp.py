@@ -9,6 +9,7 @@ import plotly.express as px
 import pandas as pd
 
 
+
 leitura_bp = Blueprint("leitura_bp", __name__)
 
 @leitura_bp.route('/receber')
@@ -83,7 +84,6 @@ def view_grafico(tipo):
 # CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
 
-@login_required
 @leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
 def pagina_correlacao_clima():
 
@@ -164,10 +164,7 @@ def selecionar_fruto():
 
     return render_template("correlacao/selecionar_fruto.html", frutos=frutos)
 
-from flask_login import login_required, current_user
-from flask import render_template, request
-import pandas as pd
-import plotly.express as px
+
 
 
 @leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
@@ -176,107 +173,243 @@ def pagina_correlacao_fruto():
 
     frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
 
-    # 🔹 pega parâmetros da URL (quando vem do modal)
-    nome_fruto = request.args.get("fruto")
-    atributo = request.args.get("atributo")
+    print("USUARIO LOGADO:", current_user.id)
+    print("FRUTOS:", frutos)
+
+    coletas = ColetaFrutoDAO.listar_por_usuario(current_user.id)
+
+    for c in coletas:
+        print(
+            c.id,
+            c.usuario_id,
+            c.nome_fruto
+        )
+    # ============================================
+    # GET
+    # ============================================
 
     if request.method == "GET":
         return render_template(
             "correlacao/correlacao_clima_fruto.html",
-            frutos=frutos,
-            nome_fruto=nome_fruto,
-            atributo=atributo
+            frutos=frutos
         )
 
-    # 🔹 POST
+    # ============================================
+    # FORM
+    # ============================================
+
     sensor = request.form.get("sensor")
     atributo = request.form.get("atributo")
     nome_fruto = request.form.get("nome_fruto")
+
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
 
     if not sensor or not atributo or not nome_fruto:
+
         return render_template(
             "correlacao/correlacao_clima_fruto.html",
             frutos=frutos,
-            aviso="Selecione todos os campos obrigatórios."
+            aviso="Preencha todos os campos."
         )
 
-    # 🔹 COLETAS
+    # ============================================
+    # COLETAS DO FRUTO
+    # ============================================
+
     coletas = [
         c for c in ColetaFrutoDAO.listar_por_usuario(current_user.id)
         if c.nome_fruto == nome_fruto
     ]
 
     if not coletas:
+
         return render_template(
             "correlacao/correlacao_clima_fruto.html",
             frutos=frutos,
-            aviso="Sem coletas para esse fruto."
+            aviso="Nenhuma coleta encontrada."
         )
 
-    df_fruto = pd.DataFrame([
-        {
-            "timestamp": c.timestamp,
-            "valor_fruto": getattr(c, atributo)
-        }
-        for c in coletas if getattr(c, atributo) is not None
-    ])
+    # ============================================
+    # DATAFRAME FRUTO
+    # ============================================
 
-    df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
+    dados_fruto = []
 
-    # 🔹 SENSOR
+    for c in coletas:
+
+        valor = getattr(c, atributo)
+
+        if valor is None:
+            continue
+
+        dados_fruto.append({
+            "data": c.timestamp.date(),
+            "valor_fruto": float(valor)
+        })
+
+    df_fruto = pd.DataFrame(dados_fruto)
+
+    if df_fruto.empty:
+
+        return render_template(
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Sem dados do fruto."
+        )
+
+    # ============================================
+    # LEITURAS SENSOR
+    # ============================================
+
     leituras = LeituraDAO.get_dados_sensor(sensor)
 
-    df_sensor = pd.DataFrame([
-        {
-            "timestamp": l.getTimestamp(),
-            "valor_sensor": l.getValor()
-        }
-        for l in leituras
-    ])
+    if not leituras:
 
-    df_sensor["timestamp"] = pd.to_datetime(df_sensor["timestamp"])
+        return render_template(
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Sensor sem leituras."
+        )
 
-    # 🔹 FILTRO DATA
-    if data_inicio and data_fim:
-        data_inicio = pd.to_datetime(data_inicio)
-        data_fim = pd.to_datetime(data_fim)
+    dados_sensor = []
+
+    for l in leituras:
+
+        timestamp = l.getTimestamp()
+
+        if not timestamp:
+            continue
+
+        dados_sensor.append({
+            "data": timestamp.date(),
+            "valor_sensor": float(l.getValor())
+        })
+
+    df_sensor = pd.DataFrame(dados_sensor)
+
+    if df_sensor.empty:
+
+        return render_template(
+            "correlacao/correlacao_clima_fruto.html",
+            frutos=frutos,
+            aviso="Sem dados do sensor."
+        )
+
+    # ============================================
+    # FILTRO DE DATA
+    # ============================================
+
+    if data_inicio:
+
+        data_inicio = pd.to_datetime(data_inicio).date()
 
         df_fruto = df_fruto[
-            (df_fruto["timestamp"] >= data_inicio) &
-            (df_fruto["timestamp"] <= data_fim)
+            df_fruto["data"] >= data_inicio
         ]
 
         df_sensor = df_sensor[
-            (df_sensor["timestamp"] >= data_inicio) &
-            (df_sensor["timestamp"] <= data_fim)
+            df_sensor["data"] >= data_inicio
         ]
 
-    # 🔴 ALINHAMENTO
-    df_merged = pd.merge_asof(
-        df_fruto.sort_values("timestamp"),
-        df_sensor.sort_values("timestamp"),
-        on="timestamp",
-        direction="nearest"
-    ).dropna()
+    if data_fim:
 
-    if df_merged.empty:
+        data_fim = pd.to_datetime(data_fim).date()
+
+        df_fruto = df_fruto[
+            df_fruto["data"] <= data_fim
+        ]
+
+        df_sensor = df_sensor[
+            df_sensor["data"] <= data_fim
+        ]
+
+    # ============================================
+    # MÉDIA DO SENSOR POR DIA
+    # ============================================
+
+    df_sensor = (
+        df_sensor
+        .groupby("data")["valor_sensor"]
+        .mean()
+        .reset_index()
+    )
+
+    # ============================================
+    # MÉDIA DO FRUTO POR DIA
+    # ============================================
+
+    df_fruto = (
+        df_fruto
+        .groupby("data")["valor_fruto"]
+        .mean()
+        .reset_index()
+    )
+
+    # ============================================
+    # JUNÇÃO POR DIA
+    # ============================================
+
+    df = pd.merge(
+        df_fruto,
+        df_sensor,
+        on="data",
+        how="inner"
+    )
+
+    if df.empty:
+
         return render_template(
             "correlacao/correlacao_clima_fruto.html",
             frutos=frutos,
-            aviso="Sem dados compatíveis."
+            aviso="Não existem datas compatíveis."
         )
 
-    correlacao = df_merged["valor_fruto"].corr(df_merged["valor_sensor"])
+    # ============================================
+    # CORRELAÇÃO
+    # ============================================
 
-    fig = px.scatter(df_merged, x="valor_sensor", y="valor_fruto")
+    correlacao = df["valor_fruto"].corr(
+        df["valor_sensor"]
+    )
+
+    # ============================================
+    # GRÁFICO
+    # ============================================
+
+    # ============================================
+    # GRÁFICO TEMPORAL
+    # ============================================
+
+    fig = px.line(
+        df,
+        x="data",
+        y=["valor_sensor", "valor_fruto"],
+        markers=True,
+        title=f"{sensor} × {atributo}"
+    )
+
+    fig.update_layout(
+        xaxis_title="Data",
+        yaxis_title="Valor",
+        legend_title="Séries",
+        template="plotly_white"
+    )
+
+    fig.update_traces(
+        mode="lines+markers"
+    )
+
+    graphHTML = fig.to_html(full_html=False)
+    # ============================================
+    # RENDER
+    # ============================================
 
     return render_template(
         "correlacao/correlacao_clima_fruto.html",
         frutos=frutos,
         correlacao=round(correlacao, 4),
-        graphHTML=fig.to_html(full_html=False)
+        graphHTML=graphHTML
     )
 
 # ===========================

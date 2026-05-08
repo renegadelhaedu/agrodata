@@ -22,27 +22,51 @@
 <p>Total de coletas: {{ coletas|length }}</p>
 
 <table>
+
     <tr>
         <th>ID</th>
+        <th>Fruto</th>
         <th>Frutose</th>
         <th>Peso</th>
         <th>Tamanho</th>
         <th>Acidez</th>
         <th>Data</th>
+        <th>Ações</th>
     </tr>
 
     {% for c in coletas %}
     <tr>
+
         <td>{{ c.id }}</td>
+        <td>{{ c.nome_fruto }}</td>
         <td>{{ c.frutose }}</td>
         <td>{{ c.peso }}</td>
         <td>{{ c.tamanho }}</td>
         <td>{{ c.acidez }}</td>
+
         <td>
-            {{ c.timestamp.strftime('%d/%m/%Y %H:%M') if c.timestamp else '—' }}
+            {{ c.timestamp.strftime('%d/%m/%Y %H:%M') }}
         </td>
+
+        <td>
+
+            <form
+                action="{{ url_for('user_bp.excluir_coleta', id_coleta=c.id) }}"
+                method="POST"
+                onsubmit="return confirm('Deseja excluir esta coleta?')"
+            >
+
+                <button type="submit" class="btn-excluir">
+                    Excluir
+                </button>
+
+            </form>
+
+        </td>
+
     </tr>
     {% endfor %}
+
 </table>
 
 </main>

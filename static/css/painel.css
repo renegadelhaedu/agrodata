@@ -256,3 +256,27 @@ th {
 .btn-voltar:hover {
     background-color: #333;
 }
+
+.btn-excluir {
+
+    background: #c62828;
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 8px 12px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.btn-excluir:hover {
+
+    background: #e53935;
+
+    transform: scale(1.03);
+}
