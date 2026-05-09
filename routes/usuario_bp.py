@@ -15,7 +15,7 @@ def login():
         senha = request.form["senha"]
 
         user = UsuarioDAO.autenticar(email, senha)
-
+        print(user)
         if not user:
             flash("Email ou senha inválidos")
             return redirect(url_for("user_bp.login"))

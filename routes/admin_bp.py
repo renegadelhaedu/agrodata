@@ -133,7 +133,8 @@ def admin_delete_usuario(id):
 @admin_required
 @admin_bp.route("/admin/usuarios")
 def admin_usuarios():
-    usuarios = UsuarioDAO.listar_aprovados()  # 🔥 aqui
+    usuarios = UsuarioDAO.listar_aprovados()
+    print(usuarios[0].email, usuarios[0].senha)
     return render_template("admin/admin_usuarios.html", usuarios=usuarios)
 
 @login_required
