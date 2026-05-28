@@ -4,9 +4,6 @@ from routes.leitura_bp import leitura_bp
 from config import Config
 from grafico import grafico
 from analise.analisador import *
-import time
-import utils
-import threading
 import random
 from datetime import datetime, timedelta
 from routes.usuario_bp import user_bp
@@ -195,6 +192,11 @@ def popular():
 
     return "Banco populado com sucesso", 200
 
+
+@app.errorhandler(404)
+def pagina_nao_encontrada(error):
+    print("pagina nao encontrada", error)
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
