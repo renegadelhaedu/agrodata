@@ -1,46 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
+
+    <meta charset="UTF-8">
+
     <title>Excluir Leituras</title>
-    <link rel="stylesheet" href="/static/css/admin.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
 </head>
+
 <body>
 
-<header>
-    <h1>Excluir Leituras por Data</h1>
-</header>
-<nav>
-    <ul>
-        <li><a href="{{ url_for('admin_bp.admin_page') }}">Leitura de sensores</a></li>
-        <li><a href="{{ url_for('admin_bp.admin_usuarios') }}">Usuários Ativos</a></li>
-        <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
-        <li><a href="{{ url_for('admin_bp.admin_logout') }}">Sair</a></li>
-    </ul>
+<nav class="sidebar">
+
+    <h2 class="menu-title">AgroData</h2>
+
+
+
+    <!-- CORRELAÇÕES -->
+
+    <button class="dropdown-btn">
+        Correlações
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/correlacaoclimaadmin">
+            Clima × Clima
+        </a>
+
+        <a href="/correlacao-fruto-admin">
+            Clima × Fruto
+        </a>
+
+    </div>
+
+    <!-- ASSOCIAÇÃO -->
+
+    <button class="dropdown-btn">
+        Associação de Regras
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/regras">
+            Gerar Regras
+        </a>
+
+        <a href="/regras/historico">
+            Histórico
+        </a>
+
+    </div>
+
+    <!-- USUÁRIOS -->
+
+    <button class="dropdown-btn">
+        Usuários
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
+            Usuários Ativos
+        </a>
+
+        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
+            Usuários Pendentes
+        </a>
+
+    </div>
+
+    <!-- SENSORES -->
+
+    <button class="dropdown-btn">
+        Sensores
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
+            Visualizar Grafico Sensores
+        </a>
+
+        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
+            Excluir por Data
+        </a>
+         <a href="/admin">Sensores totais</a>
+
+    </div>
+
+    <!-- AGRODATA -->
+
+    <button class="dropdown-btn">
+        AgroData
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/sobre">
+            O que é o AgroData
+        </a>
+
+    </div>
+
+    <a href="{{ url_for('admin_bp.admin_logout') }}">
+        Sair
+    </a>
+
 </nav>
 
-<div class="edit-container">
+<header>
 
-<form method="POST" action="/admin/delete_by_date">
+    <h1>Excluir Leituras por Data</h1>
 
-    <label>Selecione o Sensor:</label>
-    <select name="sensor" required>
-        <option value="temperatura_ar">Temperatura do Ar</option>
-        <option value="umidade_ar">Umidade do Ar</option>
-        <option value="umidade_solo">Umidade do Solo</option>
-    </select>
-    <br><br>
-    <label>Data Início:</label>
-    <input type="date" name="data_inicio" required>
-    <br><br>
-    <label>Data Fim:</label>
-    <input type="date" name="data_fim" required>
-    <br><br>
-    <button type="submit" class="btn-excluir">Excluir Leituras</button>
+</header>
 
-</form>
+<main>
 
+<div class="card">
+
+    <h2>Gerenciamento de Sensores</h2>
+
+    <p>
+
+        Remova leituras antigas ou inconsistentes
+        utilizando filtros por intervalo de datas.
+
+    </p>
 
 </div>
 
+<form method="POST"
+      action="/admin/delete_by_date"
+      class="filter-form">
+
+    <label>Sensor:</label>
+
+    <select name="sensor" required>
+
+        <option value="temperatura_ar">
+            Temperatura do Ar
+        </option>
+
+        <option value="umidade_ar">
+            Umidade do Ar
+        </option>
+
+        <option value="umidade_solo">
+            Umidade do Solo
+        </option>
+
+        <option value="radiacao">
+            Radiação
+        </option>
+
+    </select>
+
+    <label>Data Início:</label>
+
+    <input type="date"
+           name="data_inicio"
+           required>
+
+    <label>Data Fim:</label>
+
+    <input type="date"
+           name="data_fim"
+           required>
+
+    <button type="submit"
+            class="btn-delete">
+
+        Excluir Leituras
+
+    </button>
+
+</form>
+
+</main>
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown-btn");
+
+dropdowns.forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        const container = this.nextElementSibling;
+
+        container.classList.toggle("active");
+
+    });
+
+});
+
+</script>
 </body>
 </html>

@@ -1,62 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>Usuários Ativos</title>
-    <link rel="stylesheet" href="/static/css/admin.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
 </head>
+
 <body>
 
-<header>
-    <h1>Usuários Ativos</h1>
-</header>
+<nav class="sidebar">
 
-<nav>
-    <ul>
+    <h2 class="menu-title">AgroData</h2>
 
-        <li><a href="{{ url_for('admin_bp.admin_page') }}">Leitura de sensores</a></li>
-        <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
-        <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
-        <li><a href="{{ url_for('admin_bp.admin_logout') }}">Sair</a></li>
 
-    </ul>
+
+    <!-- CORRELAÇÕES -->
+    <button class="dropdown-btn">
+        Correlações
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/correlacaoclimaadmin">
+            Clima × Clima
+        </a>
+
+        <a href="/correlacao-fruto-admin">
+            Clima × Fruto
+        </a>
+
+    </div>
+
+    <!-- ASSOCIAÇÃO -->
+    <button class="dropdown-btn">
+        Associação de Regras
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/regras">
+            Gerar Regras
+        </a>
+
+        <a href="/regras/historico">
+            Histórico
+        </a>
+
+    </div>
+
+    <!-- USUÁRIOS -->
+    <button class="dropdown-btn">
+        Usuários
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
+            Usuários Ativos
+        </a>
+
+        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
+            Usuários Pendentes
+        </a>
+
+    </div>
+
+    <!-- SENSORES -->
+    <button class="dropdown-btn">
+        Sensores
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
+            Visualizar Grafico Sensores
+        </a>
+
+        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
+            Excluir por Data
+        </a>
+         <a href="/admin">Sensores totais</a>
+
+    </div>
+
+    <a href="{{ url_for('admin_bp.admin_logout') }}">
+        Sair
+    </a>
+
 </nav>
+
+<header>
+
+    <h1>Usuários Ativos</h1>
+
+</header>
 
 <main>
 
-<h2>Lista de Usuários Aprovados</h2>
+<div class="card">
+
+    <h2>Usuários Aprovados</h2>
+
+    <p>
+
+        Lista de usuários atualmente autorizados a acessar o sistema.
+
+    </p>
+
+</div>
 
 {% if usuarios %}
+
 <table>
+
     <tr>
+
         <th>ID</th>
         <th>Nome</th>
         <th>Email</th>
         <th>Ações</th>
+
     </tr>
 
     {% for u in usuarios %}
+
     <tr>
+
         <td>{{ u.id }}</td>
         <td>{{ u.nome }}</td>
         <td>{{ u.email }}</td>
 
         <td>
-            <form action="{{ url_for('admin_bp.admin_delete_usuario', id=u.id) }}" method="POST" style="display:inline;">
-                 <button type="submit" class="btn-delete"
-                      onclick="return confirm('Tem certeza que deseja remover este usuário?')">
-                      Excluir
-                 </button>
+
+            <form method="POST"
+                  action="{{ url_for('admin_bp.admin_delete_usuario', id=u.id) }}">
+
+                <button type="submit"
+                        class="btn-delete"
+                        onclick="return confirm('Deseja excluir este usuário?')">
+
+                    Excluir
+
+                </button>
+
             </form>
+
         </td>
+
     </tr>
+
     {% endfor %}
+
 </table>
+
 {% else %}
-<p>Nenhum usuário ativo encontrado.</p>
+
+<div class="aviso">
+
+    Nenhum usuário ativo encontrado.
+
+</div>
+
 {% endif %}
 
 </main>
+
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown-btn");
+
+dropdowns.forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        this.nextElementSibling.classList.toggle("active");
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>

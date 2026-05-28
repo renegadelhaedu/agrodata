@@ -1,59 +1,210 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Gráfico por Período</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <title>Gráfico de Sensores</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
 </head>
+
 <body>
 
-<header>
-    <h1>📊 Gerar Gráfico por Período</h1>
-</header>
+<nav class="sidebar">
 
-<nav>
-    <ul>
-        <li><a href="/admin">⬅️ Voltar</a></li>
-    </ul>
+    <h2 class="menu-title">AgroData</h2>
+
+    <!-- CORRELAÇÕES -->
+    <button class="dropdown-btn">
+        Correlações
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/correlacaoclimaadmin">
+            Clima × Clima
+        </a>
+
+        <a href="/correlacao-fruto-admin">
+            Clima × Fruto
+        </a>
+
+    </div>
+
+    <!-- ASSOCIAÇÃO -->
+    <button class="dropdown-btn">
+        Associação de Regras
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/regras">
+            Gerar Regras
+        </a>
+
+        <a href="/regras/historico">
+            Histórico
+        </a>
+
+    </div>
+
+    <!-- USUÁRIOS -->
+    <button class="dropdown-btn">
+        Usuários
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
+            Usuários Ativos
+        </a>
+
+        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
+            Usuários Pendentes
+        </a>
+
+    </div>
+
+    <!-- SENSORES -->
+    <button class="dropdown-btn">
+        Sensores
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
+            Visualizar Grafico Sensores
+        </a>
+
+        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
+            Excluir por Data
+        </a>
+         <a href="/admin">Sensores totais</a>
+
+    </div>
+
+    <a href="{{ url_for('admin_bp.admin_logout') }}">
+        Sair
+    </a>
+
 </nav>
+
+<header>
+
+    <h1>Visualização de Sensores</h1>
+
+</header>
 
 <main>
 
-<form method="GET" class="filter-form">
+<div class="card">
+
+    <h2>Sobre os Sensores</h2>
+
+    <p>
+
+        Esta área permite visualizar dados históricos coletados
+        pelos sensores agrícolas do AgroData.
+
+    </p>
+
+    <p>
+
+        Os gráficos ajudam na análise climática, correlação
+        entre variáveis e identificação de padrões.
+
+    </p>
+
+</div>
+
+<form method="GET"
+      class="filter-form">
 
     <label>Sensor:</label>
+
     <select name="tipo" required>
-        <option value="">-- Escolha --</option>
+
+        <option value="">
+            -- Escolha --
+        </option>
+
         {% for s in sensores %}
-            <option value="{{ s }}" {% if request.args.get('tipo') == s %}selected{% endif %}>
-                {{ s }}
-            </option>
+
+        <option value="{{ s }}"
+        {% if request.args.get('tipo') == s %}
+            selected
+        {% endif %}
+        >
+
+            {{ s }}
+
+        </option>
+
         {% endfor %}
+
     </select>
 
     <label>Data início:</label>
-    <input type="datetime-local" name="data_inicio"
+
+    <input type="datetime-local"
+           name="data_inicio"
            value="{{ request.args.get('data_inicio', '') }}">
 
     <label>Data fim:</label>
-    <input type="datetime-local" name="data_fim"
+
+    <input type="datetime-local"
+           name="data_fim"
            value="{{ request.args.get('data_fim', '') }}">
 
-    <button type="submit">Gerar Gráfico</button>
+    <button type="submit">
+
+        Gerar Gráfico
+
+    </button>
 
 </form>
 
 {% if aviso %}
-    <p class="aviso">{{ aviso }}</p>
+
+<div class="aviso">
+
+    {{ aviso }}
+
+</div>
+
 {% endif %}
 
 {% if graphHTML %}
-    <div class="grafico">
-        {{ graphHTML | safe }}
-    </div>
+
+<div class="card">
+
+    {{ graphHTML | safe }}
+
+</div>
+
 {% endif %}
 
 </main>
+
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown-btn");
+
+dropdowns.forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        this.nextElementSibling.classList.toggle("active");
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>

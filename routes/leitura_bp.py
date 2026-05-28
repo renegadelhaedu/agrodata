@@ -83,7 +83,7 @@ def view_grafico(tipo):
 # ===========================
 # CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
-
+@login_required
 @leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
 def pagina_correlacao_clima():
 

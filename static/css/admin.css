@@ -1,6 +1,7 @@
-/* ========================= */
-/* RESET BASE */
-/* ========================= */
+/* ========================================= */
+/* RESET */
+/* ========================================= */
+
 *,
 *::before,
 *::after {
@@ -8,256 +9,424 @@
 }
 
 body {
+
+    margin: 0;
+    padding: 0;
+
     font-family: "Segoe UI", Arial, sans-serif;
-    background: #f4f6f8;
-    margin: 0;
-    color: #333;
-    line-height: 1.5;
+
+    background: #f4fff4;
+    color: #1b1b1b;
+
+    margin-left: 260px;
 }
 
-/* ========================= */
+/* ========================================= */
 /* HEADER */
-/* ========================= */
+/* ========================================= */
+
 header {
-    background: linear-gradient(135deg, #2e7d32, #388e3c);
+
+    background: linear-gradient(135deg, #0d7a32, #14a44d);
+
     color: white;
+
+    padding: 25px;
+
     text-align: center;
-    padding: 24px;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
 }
 
-/* ========================= */
-/* NAV */
-/* ========================= */
-nav {
-    background: #2e7d32;
-}
+header h1 {
 
-nav ul {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    list-style: none;
     margin: 0;
-    padding: 10px;
+    font-size: 30px;
 }
 
-nav a {
+/* ========================================= */
+/* SIDEBAR */
+/* ========================================= */
+
+.sidebar {
+
+    width: 260px;
+
+    height: 100vh;
+
+    background: #0f3f1f;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    overflow-y: auto;
+
+    padding-top: 20px;
+
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+
+.menu-title {
+
     color: white;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: background 0.2s ease;
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+    font-size: 24px;
 }
 
-nav a:hover {
-    background: #4caf50;
-}
+/* LINKS */
 
-/* ========================= */
-/* LAYOUT */
-/* ========================= */
-main {
-    width: 95%;
-    max-width: 1100px;
-    margin: 20px auto;
-}
+.sidebar a,
+.dropdown-btn {
 
-/* ========================= */
-/* BOTÕES */
-/* ========================= */
-button,
-.btn-voltar,
-.btn-delete {
+    width: 100%;
+
+    display: block;
+
+    padding: 14px 20px;
+
     border: none;
-    border-radius: 6px;
+
+    background: transparent;
+
+    color: white;
+
+    text-decoration: none;
+
+    text-align: left;
+
+    font-size: 15px;
+
     cursor: pointer;
-    font-weight: 600;
+
     transition: 0.2s;
 }
 
-/* botão padrão */
-button {
-    background: #2e7d32;
-    color: white;
-    padding: 10px;
+.sidebar a:hover,
+.dropdown-btn:hover {
+
+    background: #198754;
 }
 
-button:hover {
-    background: #43a047;
+/* SUBMENU */
+
+.dropdown-container {
+
+    display: none;
+
+    background: #14532d;
 }
 
-/* voltar */
-.btn-voltar {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 18px;
-    text-decoration: none;
-    background: #2e7d32;
-    color: white;
+.dropdown-container.active {
+
+    display: block;
 }
 
-.btn-voltar:hover {
-    background: #43a047;
-    transform: translateY(-1px);
+.dropdown-container a {
+
+    padding-left: 45px;
+
+    font-size: 14px;
 }
 
-/* delete */
-.btn-delete {
-    background: #c62828;
-    color: white;
-    padding: 6px 10px;
+/* ========================================= */
+/* MAIN */
+/* ========================================= */
+
+main {
+
+    width: 95%;
+
+    margin: 30px auto;
 }
 
-.btn-delete:hover {
-    background: #e53935;
-}
+/* ========================================= */
+/* CARDS */
+/* ========================================= */
 
-/* ========================= */
-/* LOGIN */
-/* ========================= */
-.login-container {
-    max-width: 400px;
-    margin: 40px auto;
+.card {
+
     background: white;
-    padding: 25px;
+
+    padding: 20px;
+
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+    margin-bottom: 25px;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-.login-container input,
-.login-container button {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-/* ========================= */
+/* ========================================= */
 /* FORMULÁRIOS */
-/* ========================= */
+/* ========================================= */
+
 .filter-form,
 .form-filtro {
-    width: 100%;
+
     background: white;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 
     display: flex;
+
     flex-wrap: wrap;
-    gap: 10px;
+
+    gap: 15px;
+
     align-items: center;
 }
 
 .filter-form label,
 .form-filtro label {
-    font-size: 14px;
-    font-weight: 600;
+
+    font-weight: bold;
+
+    color: #146c2e;
 }
 
 .filter-form input,
 .filter-form select,
 .form-filtro input,
 .form-filtro select {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
 
-/* evita inputs gigantes */
-.filter-form input,
-.filter-form select {
     flex: 1;
-    min-width: 150px;
+
+    min-width: 180px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    border: 1px solid #cfcfcf;
 }
 
-/* ========================= */
-/* TABELA */
-/* ========================= */
-.table-container {
-    overflow-x: auto;
+/* ========================================= */
+/* BOTÕES */
+/* ========================================= */
+
+button,
+.btn-voltar,
+.btn-delete,
+.btn-approve {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition: 0.2s;
 }
+
+button {
+
+    background: #119c3b;
+
+    color: white;
+}
+
+button:hover {
+
+    background: #0d7a32;
+}
+
+.btn-delete {
+
+    background: #d62828;
+
+    color: white;
+}
+
+.btn-delete:hover {
+
+    background: #b71c1c;
+}
+
+.btn-approve {
+
+    background: #198754;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+}
+
+.btn-approve:hover {
+
+    background: #146c43;
+}
+
+.btn-voltar {
+
+    background: #198754;
+
+    color: white;
+
+    text-decoration: none;
+
+    display: inline-block;
+}
+
+.btn-voltar:hover {
+
+    background: #146c43;
+}
+
+/* ========================================= */
+/* TABELAS */
+/* ========================================= */
 
 table {
+
     width: 100%;
-    margin-top: 20px;
-    background: white;
-    border-radius: 10px;
+
     border-collapse: collapse;
+
+    background: white;
+
+    margin-top: 25px;
+
+    border-radius: 12px;
+
     overflow: hidden;
+
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 th {
-    background: #388e3c;
+
+    background: #119c3b;
+
     color: white;
-    padding: 12px;
-    font-size: 14px;
+
+    padding: 14px;
 }
 
 td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
 
-th, td {
+    padding: 12px;
+
+    border-bottom: 1px solid #eeeeee;
+
     text-align: center;
 }
 
 tr:nth-child(even) {
-    background: #fafafa;
+
+    background: #f8fff8;
 }
 
 tr:hover {
-    background: #f1f8f4;
+
+    background: #e7f8ec;
 }
 
-/* ========================= */
+/* ========================================= */
 /* ALERTAS */
-/* ========================= */
+/* ========================================= */
+
 .aviso {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    background: #ffdddd;
-    border-left: 4px solid #c62828;
-    text-align: center;
-}
 
-/* ========================= */
-/* CÓDIGO GERADO */
-/* ========================= */
-.codigo-box {
-    margin-top: 20px;
+    background: #e7f8ec;
+
+    border-left: 5px solid #119c3b;
+
     padding: 15px;
+
     border-radius: 8px;
-    background: #e8f5e9;
-    font-weight: bold;
-    text-align: center;
+
+    margin-top: 20px;
 }
 
-/* ========================= */
+/* ========================================= */
+/* LOGIN */
+/* ========================================= */
+
+.login-container {
+
+    max-width: 420px;
+
+    margin: 60px auto;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 14px;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
+.login-container h2 {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    color: #119c3b;
+}
+
+.login-container input {
+
+    width: 100%;
+
+    margin-bottom: 15px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+}
+
+/* ========================================= */
 /* RESPONSIVO */
-/* ========================= */
+/* ========================================= */
+
 @media (max-width: 768px) {
 
-    nav ul {
-        flex-direction: column;
-        align-items: center;
+    body {
+
+        margin-left: 0;
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        height: auto;
+
+        position: relative;
     }
 
     .filter-form,
     .form-filtro {
+
         flex-direction: column;
+
         align-items: stretch;
     }
 
     button {
+
         width: 100%;
     }
-
 }

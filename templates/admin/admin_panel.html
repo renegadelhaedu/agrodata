@@ -1,63 +1,187 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
-    <title>Painel Admin</title>
-    <link rel="stylesheet" href="/static/css/admin.css">
+    <meta charset="UTF-8">
+    <title>Painel Administrativo</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
+
 <body>
 
-<header>
-    <h1>Painel Administrativo</h1>
-</header>
+<nav class="sidebar">
 
-<nav>
-    <ul>
-        <li><a href="{{ url_for('admin_bp.admin_usuarios') }}">Usuários Ativos</a></li>
-        <li><a href="{{ url_for('admin_bp.usuarios_pendentes') }}">Usuários Pendentes</a></li>
-        <li><a href="{{ url_for('admin_bp.delete_by_date_page') }}">Excluir por Data</a></li>
-        <li><a href="{{ url_for('admin_bp.grafico_filtrado') }}">Gráfico</a></li>
-        <li><a href="{{ url_for('admin_bp.admin_logout', tipo='temperatura_ar') }}">Sair</a></li>
+    <h2 class="menu-title">AgroData</h2>
 
-    </ul>
+
+
+    <!-- CORRELAÇÕES -->
+
+    <button class="dropdown-btn">
+        Correlações
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/correlacaoclimaadmin">
+            Clima × Clima
+        </a>
+
+        <a href="/correlacao-fruto-admin">
+            Clima × Fruto
+        </a>
+
+    </div>
+
+    <!-- ASSOCIAÇÃO -->
+
+    <button class="dropdown-btn">
+        Associação de Regras
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/regras">
+            Gerar Regras
+        </a>
+
+        <a href="/regras/historico">
+            Histórico
+        </a>
+
+    </div>
+
+    <!-- USUÁRIOS -->
+
+    <button class="dropdown-btn">
+        Usuários
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
+            Usuários Ativos
+        </a>
+
+        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
+            Usuários Pendentes
+        </a>
+
+    </div>
+
+    <!-- SENSORES -->
+
+    <button class="dropdown-btn">
+        Sensores
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
+            Visualizar Grafico Sensores
+        </a>
+
+        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
+            Excluir por Data
+        </a>
+         <a href="/admin">Sensores totais</a>
+
+    </div>
+
+    <!-- AGRODATA -->
+
+    <button class="dropdown-btn">
+        AgroData
+    </button>
+
+    <div class="dropdown-container">
+
+        <a href="/sobre">
+            O que é o AgroData
+        </a>
+
+    </div>
+
+    <a href="{{ url_for('admin_bp.admin_logout') }}">
+        Sair
+    </a>
+
 </nav>
 
-<form class="filter-form" method="GET" action="{{ url_for('admin_bp.filtrar_leituras') }}">
+<header>
+
+    <h1>Painel Administrativo</h1>
+
+</header>
+
+<main>
+
+
+<form class="filter-form"
+      method="GET"
+      action="{{ url_for('admin_bp.filtrar_leituras') }}">
 
     <label>Início:</label>
-    <input type="datetime-local" name="data_inicio"
+
+    <input type="datetime-local"
+           name="data_inicio"
            value="{{ request.args.get('data_inicio', '') }}">
 
     <label>Fim:</label>
-    <input type="datetime-local" name="data_fim"
+
+    <input type="datetime-local"
+           name="data_fim"
            value="{{ request.args.get('data_fim', '') }}">
 
     <label>Tipo:</label>
+
     <select name="tipo">
-        <option value="">Todos</option>
+
+        <option value="">
+            Todos
+        </option>
 
         {% for s in sensores %}
+
             <option value="{{ s }}"
-                {% if request.args.get('tipo') == s %}selected{% endif %}>
+            {% if request.args.get('tipo') == s %}
+                selected
+            {% endif %}
+            >
+
                 {{ s }}
+
             </option>
+
         {% endfor %}
+
     </select>
 
-    <button type="submit">Filtrar</button>
+    <button type="submit">
+        Filtrar
+    </button>
+
 </form>
 
 <table>
+
     <tr>
-        <th>Contagem</th>
+
+        <th>ID</th>
         <th>Sensor</th>
         <th>Tipo</th>
         <th>Valor</th>
         <th>Data</th>
         <th>Ações</th>
+
     </tr>
 
     {% for l in leituras %}
+
     <tr>
+
         <td>{{ l.id }}</td>
         <td>{{ l.sensor_id }}</td>
         <td>{{ l.tipo }}</td>
@@ -65,16 +189,47 @@
         <td>{{ l.timestamp }}</td>
 
         <td>
-            <form action="{{ url_for('admin_bp.admin_delete_by_id', id=l.id) }}" method="POST">
-                <button type="submit" class="btn-delete"
-                    onclick="return confirm('Tem certeza que deseja apagar esta leitura?')">
+
+            <form method="POST"
+                  action="{{ url_for('admin_bp.admin_delete_by_id', id=l.id) }}">
+
+                <button type="submit"
+                        class="btn-delete"
+                        onclick="return confirm('Deseja excluir esta leitura?')">
+
                     Excluir
+
                 </button>
+
             </form>
+
         </td>
+
     </tr>
+
     {% endfor %}
+
 </table>
+
+</main>
+
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown-btn");
+
+dropdowns.forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        const container = this.nextElementSibling;
+
+        container.classList.toggle("active");
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>
