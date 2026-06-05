@@ -1,0 +1,97 @@
+{% extends "admin/admin_base.html" %}
+
+{% block titulo %}
+Regressão Polinomial
+{% endblock %}
+
+{% block conteudo %}
+
+<header>
+    <h1>Regressão Polinomial</h1>
+</header>
+
+<main>
+
+<div class="card">
+
+{% if resultado.erro %}
+
+    <h2>Erro</h2>
+    <p>{{ resultado.erro }}</p>
+
+{% else %}
+
+    <h2>Resultado</h2>
+
+    <p>
+
+        <strong>Intercepto:</strong>
+
+        {{ resultado.intercepto }}
+
+    </p>
+
+    <p>
+
+        <strong>Coeficientes:</strong>
+
+    </p>
+
+    <ul>
+
+        {% for coef in resultado.coeficientes %}
+
+            <li>{{ coef }}</li>
+
+        {% endfor %}
+
+    </ul>
+
+    <p>
+
+        <strong>R²:</strong>
+
+        {{ resultado.r2 }}
+
+    </p>
+
+    <hr>
+
+    <h2>Interpretação</h2>
+
+    <p>
+
+        Diferente da regressão linear,
+        este modelo consegue representar
+        comportamentos em curva.
+
+    </p>
+
+    <p>
+
+        O modelo explica aproximadamente
+
+        <strong>
+            {{ (resultado.r2 * 100)|round(2) }}%
+        </strong>
+
+        das variações observadas.
+
+    </p>
+
+    <p>
+
+        Se o R² for maior que o da regressão linear simples,
+        isso indica que a relação entre temperatura e
+        umidade do solo não é uma linha reta,
+        mas uma curva.
+
+    </p>
+
+{% endif %}
+
+</div>
+
+</main>
+
+{% endblock %}

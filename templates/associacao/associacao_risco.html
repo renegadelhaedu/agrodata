@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Regras de Associação - Riscos</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/associacao.css') }}">
+
+</head>
+
+<body>
+{% include 'admin/admin_base.html' %}
+<header>
+
+    <h1>Regras de Associação - Riscos Agrícolas</h1>
+
+</header>
+
+<main>
+
+{% if regras %}
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Condição</th>
+            <th>Resultado</th>
+            <th>Suporte</th>
+            <th>Confiança</th>
+            <th>Força</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for regra in regras %}
+
+        <tr>
+
+            <td>{{ regra.antecedente }}</td>
+            <td>{{ regra.consequente }}</td>
+            <td>{{ regra.support }}</td>
+            <td>{{ regra.confidence }}</td>
+            <td>{{ regra.lift }}</td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% else %}
+
+<p>Nenhuma regra encontrada.</p>
+
+{% endif %}
+
+</main>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const dropdowns =
+        document.querySelectorAll(".dropdown-btn");
+
+    dropdowns.forEach(btn => {
+
+        btn.addEventListener("click", function () {
+
+            const container =
+                this.nextElementSibling;
+
+            container.classList.toggle("active");
+
+        });
+
+    });
+
+});
+
+</script>
+</body>
+
+</html>

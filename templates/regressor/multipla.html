@@ -1,0 +1,89 @@
+{% extends "admin/admin_base.html" %}
+
+{% block titulo %}
+Regressão Linear Múltipla
+{% endblock %}
+
+{% block conteudo %}
+
+<header>
+    <h1>Regressão Linear Múltipla</h1>
+</header>
+
+<main>
+
+<div class="card">
+
+{% if resultado.erro %}
+
+    <h2>Erro</h2>
+    <p>{{ resultado.erro }}</p>
+
+{% else %}
+
+    <h2>Influência de cada fator</h2>
+
+    <table>
+
+        <tr>
+            <th>Variável</th>
+            <th>Coeficiente</th>
+        </tr>
+
+        <tr>
+            <td>Temperatura</td>
+            <td>{{ resultado.coeficientes.temperatura }}</td>
+        </tr>
+
+        <tr>
+            <td>Umidade do Ar</td>
+            <td>{{ resultado.coeficientes.umidade_ar }}</td>
+        </tr>
+
+        <tr>
+            <td>Radiação UV</td>
+            <td>{{ resultado.coeficientes.radiacao_uv }}</td>
+        </tr>
+
+    </table>
+
+    <br>
+
+    <p>
+        <strong>R²:</strong>
+        {{ resultado.r2 }}
+    </p>
+
+    <hr>
+
+    <h2>Interpretação</h2>
+
+    <p>
+
+        Este modelo analisa simultaneamente:
+
+        temperatura,
+        umidade do ar
+        e radiação UV.
+
+    </p>
+
+    <p>
+
+        Ele consegue explicar
+
+        <strong>
+            {{ (resultado.r2 * 100)|round(2) }}%
+        </strong>
+
+        do comportamento da umidade do solo.
+
+    </p>
+
+</div>
+
+{% endif %}
+
+</main>
+
+{% endblock %}

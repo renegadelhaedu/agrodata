@@ -1,0 +1,84 @@
+{% extends "admin/admin_base.html" %}
+
+{% block titulo %}
+Árvore de Decisão
+{% endblock %}
+
+{% block conteudo %}
+
+<header>
+    <h1>Regressor por Árvore de Decisão</h1>
+</header>
+
+<main>
+
+<div class="card">
+
+{% if resultado.erro %}
+
+    <h2>Erro</h2>
+    <p>{{ resultado.erro }}</p>
+
+{% else %}
+
+    <p>
+
+        <strong>R²:</strong>
+
+        {{ resultado.r2 }}
+
+    </p>
+
+    <p>
+
+        <strong>Profundidade:</strong>
+
+        {{ resultado.profundidade }}
+
+    </p>
+
+    <p>
+
+        <strong>Folhas:</strong>
+
+        {{ resultado.folhas }}
+
+    </p>
+
+    <hr>
+
+    <h2>Interpretação</h2>
+
+    <p>
+
+        A árvore cria regras automáticas
+        para prever a umidade do solo.
+
+    </p>
+
+    <p>
+
+        Quanto maior a profundidade,
+        mais detalhadas são as decisões.
+
+    </p>
+
+    <p>
+
+        O modelo explica aproximadamente
+
+        <strong>
+            {{ (resultado.r2 * 100)|round(2) }}%
+        </strong>
+
+        das variações observadas.
+
+    </p>
+
+{% endif %}
+
+</div>
+
+</main>
+
+{% endblock %}

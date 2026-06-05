@@ -115,6 +115,32 @@ class LeituraDAO:
 
         return query.order_by(Leitura.timestamp.asc()).all()
 
+    @staticmethod
+    def deletar_por_data(sensor, data_inicio, data_fim):
+
+        query = Leitura.query.filter(
+            Leitura.tipo == sensor
+        )
+
+        if data_inicio:
+            query = query.filter(
+                Leitura.timestamp >= data_inicio
+            )
+
+        if data_fim:
+            query = query.filter(
+                Leitura.timestamp <= data_fim
+            )
+
+        registros = query.all()
+
+        for leitura in registros:
+            db.session.delete(leitura)
+
+        db.session.commit()
+
+        return len(registros)
+
 
 
 

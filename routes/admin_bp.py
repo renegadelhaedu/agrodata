@@ -14,6 +14,14 @@ from dao.coletaFrutoDao import ColetaFrutoDAO
 import pandas as pd
 from flask_login import current_user
 import plotly.express as px
+from analise.associacao_regras import (
+    gerar_regras_clima,
+    gerar_regras_risco,
+    gerar_regras_qualidade,
+    gerar_regras_frutos
+)
+
+from analise.regressor import *
 
 
 
@@ -125,11 +133,33 @@ def admin_delete_by_id(id):
     flash("Leitura excluída", "success")
     return redirect(url_for("admin_bp.admin_page"))
 
+
 @login_required
 @admin_required
-@admin_bp.route("/admin/delete_by_date", methods=["GET"])
+@admin_bp.route("/admin/delete_by_date", methods=["GET", "POST"])
 def delete_by_date_page():
-    return render_template("admin/admin_delete_by_date_page.html")
+
+    if request.method == "POST":
+
+        sensor = request.form.get("sensor")
+        data_inicio = request.form.get("data_inicio")
+        data_fim = request.form.get("data_fim")
+
+        LeituraDAO.deletar_por_data(
+            sensor,
+            data_inicio,
+            data_fim
+        )
+
+        flash("Leituras removidas com sucesso.")
+
+        return redirect(
+            url_for("admin_bp.delete_by_date_page")
+        )
+
+    return render_template(
+        "admin/admin_delete_by_date_page.html"
+    )
 
 
 @login_required
@@ -285,7 +315,7 @@ def pagina_correlacao_clima():
 
     if request.method == "GET":
         return render_template(
-            "correlacao/correlacao_clima_admin.html",
+            "correlacao/admin/correlacao_clima_admin.html",
             data_min=data_min,
             data_max=data_max,
         )
@@ -298,7 +328,7 @@ def pagina_correlacao_clima():
 
     if not tipo1 or not tipo2:
         return render_template(
-            "correlacao/correlacao_clima_admin.html",
+            "correlacao/admin/correlacao_clima_admin.html",
             aviso="Selecione os dois sensores.",
             data_min=data_min,
             data_max=data_max,
@@ -310,7 +340,7 @@ def pagina_correlacao_clima():
 
     if not leituras1 or not leituras2:
         return render_template(
-            "correlacao/correlacao_clima_admin.html",
+            "correlacao/admin/correlacao_clima_admin.html",
             aviso="⚠ Sensores sem dados suficientes.",
             data_min=data_min,
             data_max=data_max
@@ -334,7 +364,7 @@ def pagina_correlacao_clima():
     graph_html = fig.to_html(full_html=False)
 
     return render_template(
-        "correlacao/correlacao_clima_admin.html",
+        "correlacao/admin/correlacao_clima_admin.html",
         graphHTML=graph_html,
         correlacao=corre,
         data_min=data_min,
@@ -366,7 +396,7 @@ def pagina_correlacao_fruto():
 
     if request.method == "GET":
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos
         )
 
@@ -384,7 +414,7 @@ def pagina_correlacao_fruto():
     if not sensor or not atributo or not nome_fruto:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Preencha todos os campos."
         )
@@ -401,7 +431,7 @@ def pagina_correlacao_fruto():
     if not coletas:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Nenhuma coleta encontrada."
         )
@@ -429,7 +459,7 @@ def pagina_correlacao_fruto():
     if df_fruto.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Sem dados do fruto."
         )
@@ -443,7 +473,7 @@ def pagina_correlacao_fruto():
     if not leituras:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Sensor sem leituras."
         )
@@ -467,7 +497,7 @@ def pagina_correlacao_fruto():
     if df_sensor.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Sem dados do sensor."
         )
@@ -536,7 +566,7 @@ def pagina_correlacao_fruto():
     if df.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto_admin.html",
+            "correlacao/admin/correlacao_clima_fruto_admin.html",
             frutos=frutos,
             aviso="Não existem datas compatíveis."
         )
@@ -582,10 +612,116 @@ def pagina_correlacao_fruto():
     # ============================================
 
     return render_template(
-        "correlacao/correlacao_clima_fruto_admin.html",
+        "correlacao/admin/correlacao_clima_fruto_admin.html",
         frutos=frutos,
         correlacao=round(correlacao, 4),
         graphHTML=graphHTML
     )
 
+#associacoes de regras
 
+@login_required
+@admin_required
+@admin_bp.route("/regras/frutos")
+def regras_frutos():
+
+    regras = gerar_regras_frutos()
+
+    return render_template(
+        "associacao/associacao_frutos.html",
+        regras=regras
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regras/clima")
+def regras_clima():
+
+    regras = gerar_regras_clima()
+
+    return render_template(
+        "associacao/associacao_clima.html",
+        regras=regras
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regras/qualidade")
+def regras_qualidade():
+
+    regras = gerar_regras_qualidade()
+
+    return render_template(
+        "associacao/associacao_qualidade.html",
+        regras=regras
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regras/riscos")
+def regras_risco():
+
+    regras = gerar_regras_risco()
+
+    return render_template(
+        "associacao/associacao_risco.html",
+        regras=regras
+    )
+
+
+
+#regressao
+
+@login_required
+@admin_required
+@admin_bp.route("/regressor/linear")
+def regressor_linear():
+
+    resultado = regressao_linear_simples()
+
+    return render_template(
+        "regressor/linear.html",
+        resultado=resultado
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regressor/multipla")
+def regressor_multipla():
+
+    resultado = regressao_linear_multipla()
+
+    return render_template(
+        "regressor/multipla.html",
+        resultado=resultado
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regressor/arvore")
+def regressor_arvore():
+
+    resultado = regressao_arvore()
+
+    return render_template(
+        "regressor/arvore.html",
+        resultado=resultado
+    )
+
+
+@login_required
+@admin_required
+@admin_bp.route("/regressor/polinomial")
+def regressor_polinomial():
+
+    resultado = regressao_polinomial()
+
+    return render_template(
+        "regressor/polinomial.html",
+        resultado=resultado
+    )

@@ -10,7 +10,7 @@ from routes.usuario_bp import user_bp
 from config import login_manager
 from utils import TipoSensor, TipoFruta
 from banco import db
-
+from modelo.coletaFruto import ColetaFruto
 
 
 app = Flask(__name__)
@@ -66,22 +66,6 @@ def home():
 
 
 
-
-@app.route('/ok')
-def analisar():
-    corre, df1, df2 = gerar_correlacao_sensor('umidade_ar','umidade_solo')
-    fig = grafico.grafico_correlacao(df1, df2)
-
-    return render_template('grafico.html',correlacao = corre, graphJSON = fig.to_html())
-
-@app.route("/debug/leituras")
-def debug_leituras():
-    from dao.leituraDAO import LeituraDAO
-    leituras = LeituraDAO.listar_todas()
-    return "<br>".join([f"{l.tipo} - {l.getTimestamp()} - {l.getValor()}" for l in leituras])
-
-
-
 #rota para gerar um monte de dados
 
 
@@ -109,25 +93,30 @@ def popular():
     # SENSORES
     # =========================================
 
+    # =========================================
+    # SENSORES
+    # =========================================
+
+    # =========================================
+    # SENSORES
+    # =========================================
+
     for i in range(200):
 
-        # dias passados
         base = agora - timedelta(days=i)
+
+        hora = random.randint(0, 23)
+        minuto = random.randint(0, 59)
+
+        data_sensor = base.replace(
+            hour=hora,
+            minute=minuto,
+            second=0,
+            microsecond=0
+        )
 
         for sensor_id, tipo_enum in sensores:
 
-            # horário aleatório
-            hora = random.randint(0, 23)
-            minuto = random.randint(0, 59)
-
-            data_sensor = base.replace(
-                hour=hora,
-                minute=minuto,
-                second=0,
-                microsecond=0
-            )
-
-            # valores coerentes
             if tipo_enum == TipoSensor.TEMPERATURA_AR:
                 valor = random.uniform(20, 35)
 
@@ -191,6 +180,7 @@ def popular():
     db.session.commit()
 
     return "Banco populado com sucesso", 200
+
 
 
 @app.errorhandler(404)

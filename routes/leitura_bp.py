@@ -30,34 +30,7 @@ def receber_dados_sensores():
     return jsonify("deu certo"), 201
 
 
-@leitura_bp.route("/api/leituras", methods=["POST"])
-def receber_leitura():
-    dados = request.get_json()
-    if not dados or not all(k in dados for k in ("sensor_id", "tipo", "valor")):
-        print('NAO - ', dados)
-        return jsonify({"erro": "JSON inválido ou incompleto"}), 400
-    print('SIM - ', dados)
-    leitura = LeituraDAO.salvar(
-        sensor_id=dados["sensor_id"],
-        tipo=dados["tipo"],
-        valor=dados["valor"]
-    )
-    return jsonify(leitura.to_dict()), 201
 
-
-@login_required
-@admin_required
-@leitura_bp.route("/api/leituras", methods=["GET"])
-def listar_leituras_api():
-    leituras = LeituraDAO.listar_todas()
-    return jsonify([l.to_dict() for l in leituras])
-
-
-
-@leitura_bp.route("/", methods=["GET"])
-def listar_leituras_view():
-    leituras = LeituraDAO.listar_todas()
-    return jsonify([l.to_dict() for l in leituras])
 
 
 # ===========================
@@ -97,7 +70,7 @@ def pagina_correlacao_clima():
 
     if request.method == "GET":
         return render_template(
-            "correlacao/correlacao_clima.html",
+            "correlacao/usuario/correlacao_clima.html",
             data_min=data_min,
             data_max=data_max,
         )
@@ -110,7 +83,7 @@ def pagina_correlacao_clima():
 
     if not tipo1 or not tipo2:
         return render_template(
-            "correlacao/correlacao_clima.html",
+            "correlacao/usuario/correlacao_clima.html",
             aviso="Selecione os dois sensores.",
             data_min=data_min,
             data_max=data_max,
@@ -122,7 +95,7 @@ def pagina_correlacao_clima():
 
     if not leituras1 or not leituras2:
         return render_template(
-            "correlacao/correlacao_clima.html",
+            "correlacao/usuario/correlacao_clima.html",
             aviso="⚠ Sensores sem dados suficientes.",
             data_min=data_min,
             data_max=data_max
@@ -146,7 +119,7 @@ def pagina_correlacao_clima():
     graph_html = fig.to_html(full_html=False)
 
     return render_template(
-        "correlacao/correlacao_clima.html",
+        "correlacao/usuario/correlacao_clima.html",
         graphHTML=graph_html,
         correlacao=corre,
         data_min=data_min,
@@ -155,20 +128,8 @@ def pagina_correlacao_clima():
     )
 
 
-@leitura_bp.route("/selecionar-fruto")
 @login_required
-def selecionar_fruto():
-
-    todas = ColetaFrutoDAO.listar_por_usuario(current_user.id)
-    frutos = list(set([c.nome_fruto for c in todas]))
-
-    return render_template("correlacao/selecionar_fruto.html", frutos=frutos)
-
-
-
-
 @leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
-@login_required
 def pagina_correlacao_fruto():
 
     frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
@@ -190,7 +151,7 @@ def pagina_correlacao_fruto():
 
     if request.method == "GET":
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos
         )
 
@@ -208,7 +169,7 @@ def pagina_correlacao_fruto():
     if not sensor or not atributo or not nome_fruto:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Preencha todos os campos."
         )
@@ -225,7 +186,7 @@ def pagina_correlacao_fruto():
     if not coletas:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Nenhuma coleta encontrada."
         )
@@ -253,7 +214,7 @@ def pagina_correlacao_fruto():
     if df_fruto.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Sem dados do fruto."
         )
@@ -267,7 +228,7 @@ def pagina_correlacao_fruto():
     if not leituras:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Sensor sem leituras."
         )
@@ -291,7 +252,7 @@ def pagina_correlacao_fruto():
     if df_sensor.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Sem dados do sensor."
         )
@@ -360,7 +321,7 @@ def pagina_correlacao_fruto():
     if df.empty:
 
         return render_template(
-            "correlacao/correlacao_clima_fruto.html",
+            "correlacao/usuario/correlacao_clima_fruto.html",
             frutos=frutos,
             aviso="Não existem datas compatíveis."
         )
@@ -406,161 +367,14 @@ def pagina_correlacao_fruto():
     # ============================================
 
     return render_template(
-        "correlacao/correlacao_clima_fruto.html",
+        "correlacao/usuario/correlacao_clima_fruto.html",
         frutos=frutos,
         correlacao=round(correlacao, 4),
         graphHTML=graphHTML
     )
 
-# ===========================
-# DEBUG
-# ===========================
-@leitura_bp.route("/datas")
-def listar_datas():
-    leituras = LeituraDAO.listar_todas()
-    datas = sorted({str(l.getTimestamp()) for l in leituras})
-    return "<br>".join(datas)
-
-
-@leitura_bp.route("/correlacao/clima", methods=["GET"])
-def corre_clima_page():
-    return render_template("correlacao_clima.html")
-
-
-@leitura_bp.route("/correlacao/climaFruto", methods=["GET"])
-def corre_clima_fruto_page():
-    return render_template("correlacao_clima_fruto.html")
-
-
-@leitura_bp.route("/correlacao/user", methods=["GET", "POST"])
-def correlacao_usuario():
-
-    from modelo.coletaFruto import ColetaFruto
-    import pandas as pd
-
-    # 🔒 segurança
-    if not session.get("usuario_logado"):
-        return redirect(url_for("user_bp.login"))
-
-    if request.method == "GET":
-        return render_template("correlacao/correlacao_user.html")
-
-    # =========================
-    # PEGAR DADOS DO FORM
-    # =========================
-    sensor = request.form.get("sensor")
-    atributo = request.form.get("atributo")
-    data_inicio = request.form.get("data_inicio")
-    data_fim = request.form.get("data_fim")
-
-    if not sensor or not atributo:
-        return render_template("correcorrelacao_user.html", aviso="Preencha todos os campos")
-
-    # =========================
-    # BUSCAR DADOS DO USUÁRIO
-    # =========================
-    coletas = ColetaFruto.query.filter_by(usuario_id=session["user_id"]).all()
-
-    if not coletas:
-        return render_template("correlacao_user.html", aviso="Você não possui coletas")
-
-    # =========================
-    # DATAFRAME FRUTO
-    # =========================
-    try:
-        df_fruto = pd.DataFrame([
-            {
-                "valor_fruto": getattr(c, atributo),
-                "timestamp": c.timestamp
-            }
-            for c in coletas if getattr(c, atributo) is not None
-        ])
-    except AttributeError:
-        return render_template("correlacao_user.html", aviso="Atributo inválido")
-
-    if df_fruto.empty:
-        return render_template("correlacao_user.html", aviso="Sem dados válidos de fruto")
-
-    df_fruto["timestamp"] = pd.to_datetime(df_fruto["timestamp"])
-
-    # =========================
-    # BUSCAR SENSOR
-    # =========================
-    leituras = LeituraDAO.get_dados_sensor(sensor)
-
-    if not leituras:
-        return render_template("correlacao_user.html", aviso="Sensor sem dados")
-
-    df_sensor = pd.DataFrame([
-        {
-            "valor_sensor": l.getValor(),
-            "timestamp": l.getTimestamp()
-        }
-        for l in leituras if l.getTimestamp() is not None
-    ])
-
-    if df_sensor.empty:
-        return render_template("correlacao_user.html", aviso="Sem dados do sensor")
-
-    df_sensor["timestamp"] = pd.to_datetime(df_sensor["timestamp"])
-
-    # =========================
-    # FILTRO POR DATA
-    # =========================
-    if data_inicio and data_fim:
-        try:
-            d1 = pd.to_datetime(data_inicio)
-            d2 = pd.to_datetime(data_fim)
-
-            df_fruto = df_fruto[(df_fruto["timestamp"] >= d1) & (df_fruto["timestamp"] <= d2)]
-            df_sensor = df_sensor[(df_sensor["timestamp"] >= d1) & (df_sensor["timestamp"] <= d2)]
-
-        except Exception:
-            return render_template("correlacao_user.html", aviso="Datas inválidas")
-
-    # =========================
-    # 🔥 ALINHAMENTO TEMPORAL (CRÍTICO)
-    # =========================
-    df_fruto = df_fruto.sort_values("timestamp")
-    df_sensor = df_sensor.sort_values("timestamp")
-
-    df = pd.merge_asof(
-        df_fruto,
-        df_sensor,
-        on="timestamp",
-        direction="nearest"
-    )
-
-    # =========================
-    # VALIDAÇÃO
-    # =========================
-    if len(df) < 5:
-        return render_template("correlacao_user.html", aviso="Poucos dados para correlação")
-
-    # =========================
-    # CÁLCULO
-    # =========================
-    correlacao = df["valor_fruto"].corr(df["valor_sensor"])
-
-    # =========================
-    # GRÁFICO
-    # =========================
-    from grafico import grafico
-    fig = grafico.grafico_correlacao(
-        df[["valor_fruto", "timestamp"]],
-        df[["valor_sensor", "timestamp"]]
-    )
-
-    graph_html = fig.to_html(full_html=False)
-
-    return render_template(
-        "correlacao_user.html",
-        correlacao=round(correlacao, 4),
-        graphHTML=graph_html
-    )
 
 
 
-# Rota do painel admin (exige login)
 
 

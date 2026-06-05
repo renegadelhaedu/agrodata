@@ -14,85 +14,8 @@
 
 <body>
 
-<nav class="sidebar">
 
-    <h2 class="menu-title">AgroData</h2>
-
-
-    <!-- CORRELAÇÕES -->
-    <button class="dropdown-btn">
-        Correlações
-    </button>
-
-    <div class="dropdown-container">
-
-        <a href="/correlacaoclimaadmin">
-            Clima × Clima
-        </a>
-
-        <a href="/correlacao-fruto-admin">
-            Clima × Fruto
-        </a>
-
-    </div>
-
-    <!-- ASSOCIAÇÃO -->
-    <button class="dropdown-btn">
-        Associação de Regras
-    </button>
-
-    <div class="dropdown-container">
-
-        <a href="/regras">
-            Gerar Regras
-        </a>
-
-        <a href="/regras/historico">
-            Histórico
-        </a>
-
-    </div>
-
-    <!-- USUÁRIOS -->
-    <button class="dropdown-btn">
-        Usuários
-    </button>
-
-    <div class="dropdown-container">
-
-        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
-            Usuários Ativos
-        </a>
-
-        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
-            Usuários Pendentes
-        </a>
-
-    </div>
-
-    <!-- SENSORES -->
-    <button class="dropdown-btn">
-        Sensores
-    </button>
-
-    <div class="dropdown-container">
-
-        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
-            Visualizar Grafico Sensores
-        </a>
-
-        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
-            Excluir por Data
-        </a>
-         <a href="/admin">Sensores totais</a>
-
-    </div>
-
-    <a href="{{ url_for('admin_bp.admin_logout') }}">
-        Sair
-    </a>
-
-</nav>
+{% include 'admin/admin_base.html' %}
 
 <header>
 

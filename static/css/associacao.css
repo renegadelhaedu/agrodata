@@ -1,0 +1,193 @@
+body {
+
+    font-family: Arial, sans-serif;
+
+    background: #f4fff4;
+
+    margin: 0;
+}
+
+header {
+
+    background: #0d7a32;
+
+    color: white;
+
+    padding: 25px;
+
+    text-align: center;
+}
+
+main {
+
+    width: 95%;
+
+    max-width: 1200px;
+
+    margin: 30px auto;
+}
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+
+    gap: 20px;
+}
+
+.card {
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: #0d7a32;
+
+    font-weight: bold;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+
+    transform: translateY(-3px);
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: white;
+}
+
+th {
+
+    background: #0d7a32;
+
+    color: white;
+
+    padding: 12px;
+}
+
+td {
+
+    padding: 10px;
+
+    border: 1px solid #ddd;
+}
+
+/* SIDEBAR ADMIN */
+
+body {
+
+    margin-left: 260px;
+}
+
+.sidebar {
+
+    width: 260px;
+
+    height: 100vh;
+
+    background: #0f3f1f;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    overflow-y: auto;
+
+    padding-top: 20px;
+
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+
+.menu-title {
+
+    color: white;
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+    font-size: 24px;
+}
+
+.sidebar a,
+.dropdown-btn {
+
+    width: 100%;
+
+    display: block;
+
+    padding: 14px 20px;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    text-decoration: none;
+
+    text-align: left;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.sidebar a:hover,
+.dropdown-btn:hover {
+
+    background: #198754;
+}
+
+.dropdown-container {
+
+    display: none;
+
+    background: #14532d;
+}
+
+.dropdown-container.active {
+
+    display: block;
+}
+
+.dropdown-container a {
+
+    padding-left: 45px;
+
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+
+    body {
+
+        margin-left: 0;
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        height: auto;
+
+        position: relative;
+    }
+}

@@ -1,0 +1,240 @@
+/* ========================================= */
+/* RESET */
+/* ========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:"Segoe UI",Arial,sans-serif;
+
+    background:#f4fff4;
+
+    color:#333;
+}
+
+/* ========================================= */
+/* HEADER */
+/* ========================================= */
+
+header{
+
+    background:linear-gradient(135deg,#2e7d32,#388e3c);
+
+    color:white;
+
+    text-align:center;
+
+    padding:25px;
+}
+
+header h1{
+
+    margin:0;
+}
+
+/* ========================================= */
+/* MAIN */
+/* ========================================= */
+
+main{
+
+    width:90%;
+
+    max-width:900px;
+
+    margin:30px auto;
+}
+
+/* ========================================= */
+/* VOLTAR */
+/* ========================================= */
+
+.btn-voltar{
+
+    display:inline-block;
+
+    background:#198754;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    margin-bottom:20px;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+.btn-voltar:hover{
+
+    background:#146c43;
+}
+
+/* ========================================= */
+/* FORM */
+/* ========================================= */
+
+.form-corre{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.campo{
+
+    margin-bottom:18px;
+}
+
+.campo label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
+
+    color:#2e7d32;
+}
+
+.campo select,
+.campo input{
+
+    width:100%;
+
+    padding:10px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+}
+
+.campo select:focus,
+.campo input:focus{
+
+    outline:none;
+
+    border-color:#4caf50;
+}
+
+/* ========================================= */
+/* BOTÃO */
+/* ========================================= */
+
+.btn-gerar{
+
+    width:100%;
+
+    background:#2e7d32;
+
+    color:white;
+
+    border:none;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+.btn-gerar:hover{
+
+    background:#43a047;
+}
+
+/* ========================================= */
+/* RESULTADOS */
+/* ========================================= */
+
+.resultado{
+
+    margin-top:25px;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.aviso{
+
+    margin-top:20px;
+
+    background:#e8f5e9;
+
+    border-left:5px solid #2e7d32;
+
+    padding:15px;
+
+    border-radius:8px;
+}
+
+/* ========================================= */
+/* RESPONSIVO */
+/* ========================================= */
+
+@media(max-width:768px){
+
+    main{
+
+        width:95%;
+    }
+}
+
+/* ========================================= */
+/* BOTÃO VOLTAR UNIVERSAL */
+/* ========================================= */
+
+.btn-voltar {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background: #198754;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+
+    margin-bottom: 20px;
+}
+
+.btn-voltar:hover {
+
+    background: #146c43;
+
+    transform: translateY(-2px);
+}

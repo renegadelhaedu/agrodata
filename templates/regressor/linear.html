@@ -1,0 +1,49 @@
+{% extends "admin/admin_base.html" %}
+
+{% block titulo %}
+Regressão Linear
+{% endblock %}
+
+{% block conteudo %}
+
+<header>
+    <h1>Regressão Linear Simples</h1>
+</header>
+
+<main>
+
+{% if resultado.erro %}
+
+<div class="card">
+    <h2>Erro</h2>
+    <p>{{ resultado.erro }}</p>
+</div>
+
+{% else %}
+
+<div class="card">
+
+    <h2>Resultado da Análise</h2>
+
+    <p>
+        O coeficiente encontrado foi
+        <strong>{{ resultado.coeficiente }}</strong>
+    </p>
+
+    <p>
+        Intercepto:
+        <strong>{{ resultado.intercepto }}</strong>
+    </p>
+
+    <p>
+        Qualidade do modelo (R²):
+        <strong>{{ resultado.r2 }}</strong>
+    </p>
+
+</div>
+
+{% endif %}
+
+</main>
+
+{% endblock %}

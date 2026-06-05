@@ -48,3 +48,7 @@ class ColetaFrutoDAO:
         db.session.commit()
 
         return True
+
+    @staticmethod
+    def listar_todas():
+        return ColetaFruto.query.all()

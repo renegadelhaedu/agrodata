@@ -2,33 +2,43 @@
 <html lang="pt-br">
 
 <head>
+
     <meta charset="UTF-8">
+
     <title>Correlação Clima × Fruto</title>
 
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/correlacao_clima_fruto.css') }}">
+          href="{{ url_for('static', filename='css/correlacao/admin/correlacao_clima_fruto_admin.css') }}">
+
 </head>
 
 <body>
 
+
+{% include 'admin/admin_base.html' %}
 <header>
+
     <h1>Correlação Sensor × Fruto</h1>
+
 </header>
 
 <main>
 
-<a href="/painel" class="btn-voltar">Voltar</a>
-
-<form method="POST" class="form-corre">
+<form method="POST"
+      class="form-corre">
 
     <!-- SENSOR -->
+
     <div class="campo">
 
         <label>Sensor</label>
 
-        <select name="sensor" required>
+        <select name="sensor"
+                required>
 
-            <option value="">Escolha</option>
+            <option value="">
+                Escolha
+            </option>
 
             <option value="temperatura_ar">
                 Temperatura
@@ -51,13 +61,17 @@
     </div>
 
     <!-- FRUTO -->
+
     <div class="campo">
 
         <label>Fruto</label>
 
-        <select name="nome_fruto" required>
+        <select name="nome_fruto"
+                required>
 
-            <option value="">Escolha</option>
+            <option value="">
+                Escolha
+            </option>
 
             {% if frutos %}
 
@@ -82,35 +96,29 @@
     </div>
 
     <!-- ATRIBUTO -->
+
     <div class="campo">
 
         <label>Atributo</label>
 
-        <select name="atributo" required>
+        <select name="atributo"
+                required>
 
-            <option value="">Escolha</option>
-
-            <option value="frutose">
-                Frutose
+            <option value="">
+                Escolha
             </option>
 
-            <option value="peso">
-                Peso
-            </option>
-
-            <option value="tamanho">
-                Tamanho
-            </option>
-
-            <option value="acidez">
-                Acidez
-            </option>
+            <option value="frutose">Frutose</option>
+            <option value="peso">Peso</option>
+            <option value="tamanho">Tamanho</option>
+            <option value="acidez">Acidez</option>
 
         </select>
 
     </div>
 
-    <!-- DATA INICIO -->
+    <!-- DATA -->
+
     <div class="campo">
 
         <label>Data início</label>
@@ -120,7 +128,6 @@
 
     </div>
 
-    <!-- DATA FIM -->
     <div class="campo">
 
         <label>Data fim</label>
@@ -139,7 +146,6 @@
 
 </form>
 
-<!-- AVISO -->
 {% if aviso %}
 
 <div class="aviso">
@@ -150,7 +156,6 @@
 
 {% endif %}
 
-<!-- CORRELAÇÃO -->
 {% if correlacao is not none %}
 
 <div class="resultado">
@@ -163,7 +168,6 @@
 
 {% endif %}
 
-<!-- GRAFICO -->
 {% if graphHTML %}
 
 <div class="resultado">
@@ -175,6 +179,24 @@
 {% endif %}
 
 </main>
+
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown-btn");
+
+dropdowns.forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        const container = this.nextElementSibling;
+
+        container.classList.toggle("active");
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>

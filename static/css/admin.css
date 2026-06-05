@@ -360,7 +360,26 @@ tr:hover {
 /* LOGIN */
 /* ========================================= */
 
+
+body.login-page {
+
+    margin-left: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 100vh;
+}
+
+body.login-page header {
+
+    width: 100%;
+}
+
 .login-container {
+
+    width: 100%;
 
     max-width: 420px;
 
@@ -384,6 +403,15 @@ tr:hover {
     color: #119c3b;
 }
 
+.login-container label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-weight: 600;
+}
+
 .login-container input {
 
     width: 100%;
@@ -397,6 +425,21 @@ tr:hover {
     border: 1px solid #ccc;
 }
 
+.login-container button {
+
+    width: 100%;
+
+    margin-top: 10px;
+}
+
+.login-container .btn-voltar {
+
+    display: block;
+
+    text-align: center;
+
+    margin-top: 15px;
+}
 /* ========================================= */
 /* RESPONSIVO */
 /* ========================================= */
@@ -429,4 +472,40 @@ tr:hover {
 
         width: 100%;
     }
+}
+
+/* ========================================= */
+/* BOTÃO VOLTAR UNIVERSAL */
+/* ========================================= */
+
+.btn-voltar {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background: #198754;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+
+    margin-bottom: 20px;
+}
+
+.btn-voltar:hover {
+
+    background: #146c43;
+
+    transform: translateY(-2px);
 }
