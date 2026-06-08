@@ -101,3 +101,17 @@ a {
 .btn-admin:hover {
     background: #02b252;
 }
+
+
+.btn-user{
+
+    padding: 8px 12px;
+    background: #036635;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 14px;
+    margin-left:1500px;
+}

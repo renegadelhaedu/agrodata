@@ -15,12 +15,9 @@
 
     <nav>
     <ul>
-        <li><a href="{{ url_for('user_bp.listar_coletas') }}">Minhas Coletas</a></li>
-        <li><a href="{{ url_for('user_bp.cadastrar_coleta') }}">Nova Coleta</a></li>
-        <li><a href="{{ url_for('user_bp.user_list') }}">Sensores</a></li>
         <li><a href="{{ url_for('user_bp.logout') }}">Sair</a></li>
     </ul>
-</nav>
+    </nav>
 </header>
 
 <div class="top-bar">
@@ -81,7 +78,29 @@
             </li>
 
         </ul>
+        <li class="categoria">FRUTOS</li>
 
+        <li class="submenu-titulo">Cadastro e listagem de frutos</li>
+        <ul class="submenu">
+            <li>
+               <a href="{{ url_for('user_bp.listar_coletas') }}">Minhas Coletas</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_bp.cadastrar_coleta') }}">Nova Coleta</a>
+            </li>
+
+        </ul>
+
+        <li class="categoria">SENSORES</li>
+
+        <li class="submenu-titulo">Todos os dados de sensores</li>
+        <ul class="submenu">
+            <li>
+              <a href="{{ url_for('user_bp.user_list') }}">Sensores</a>
+            </li>
+
+
+        </ul>
 
     </ul>
 </div>

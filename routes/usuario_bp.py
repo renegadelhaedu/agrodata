@@ -53,7 +53,7 @@ def cadastro():
         flash("Cadastro realizado. Aguarde aprovação.")
         return redirect("/login")
 
-    return render_template("cadastro.html")
+    return render_template("usuario/cadastro.html")
 
 @login_required
 @user_bp.route("/user", methods=["GET"])
