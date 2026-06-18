@@ -36,9 +36,9 @@ def receber_dados_sensores():
 # ===========================
 # GRAFICO ÚNICO
 # ===========================
+@leitura_bp.route("/grafico/<string:tipo>")
 @login_required
 @admin_required
-@leitura_bp.route("/grafico/<string:tipo>")
 def view_grafico(tipo):
     leituras = LeituraDAO.get_dados_sensor(tipo) or []
 
@@ -56,8 +56,8 @@ def view_grafico(tipo):
 # ===========================
 # CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
-@login_required
 @leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
+@login_required
 def pagina_correlacao_clima():
 
     from analise.analisador import gerar_correlacao_sensor
@@ -128,8 +128,8 @@ def pagina_correlacao_clima():
     )
 
 
-@login_required
 @leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
+@login_required
 def pagina_correlacao_fruto():
 
     frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
@@ -372,7 +372,6 @@ def pagina_correlacao_fruto():
         correlacao=round(correlacao, 4),
         graphHTML=graphHTML
     )
-
 
 
 
