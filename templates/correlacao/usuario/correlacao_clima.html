@@ -13,7 +13,7 @@
 </header>
 
 <main>
-    <a href="/painel" class="btn-voltar">⬅️ Voltar ao Menu</a>
+    <a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">⬅️ Voltar ao Menu</a>
 
     <form action="{{ url_for('leitura_bp.pagina_correlacao_clima') }}" method="POST" class="form-corre">
         <input type="hidden" name="mode" value="clima">
@@ -25,6 +25,7 @@
                 <option value="temperatura_ar" {% if tipo1 == 'temperatura_ar' %}selected{% endif %}>Temperatura do Ar</option>
                 <option value="umidade_ar" {% if tipo1 == 'umidade_ar' %}selected{% endif %}>Umidade do Ar</option>
                 <option value="umidade_solo" {% if tipo1 == 'umidade_solo' %}selected{% endif %}>Umidade do Solo</option>
+                <option value="radiacao_uv" {% if tipo1 == 'radiacao_uv' %}selected{% endif %}>Radiação UV</option>
             </select>
         </div>
 
@@ -35,6 +36,7 @@
                 <option value="temperatura_ar" {% if tipo2 == 'temperatura_ar' %}selected{% endif %}>Temperatura do Ar</option>
                 <option value="umidade_ar" {% if tipo2 == 'umidade_ar' %}selected{% endif %}>Umidade do Ar</option>
                 <option value="umidade_solo" {% if tipo2 == 'umidade_solo' %}selected{% endif %}>Umidade do Solo</option>
+                <option value="radiacao_uv" {% if tipo2 == 'radiacao_uv' %}selected{% endif %}>Radiação UV</option>
             </select>
         </div>
 

@@ -42,7 +42,11 @@ def admin_page():
         "valor": getattr(l, "valor", None),
         "timestamp": str(l.timestamp)
     } for l in leituras]
-    return render_template("admin/admin_panel.html", leituras=leituras_data)
+    return render_template(
+        "admin/admin_panel.html",
+        leituras=leituras_data,
+        sensores=lista_sensores
+    )
 
 
 
@@ -185,14 +189,14 @@ def usuarios_pendentes():
     usuarios = UsuarioDAO.listar_pendentes()
     return render_template("admin/admin_pendentes.html", usuarios=usuarios)
 
-@admin_bp.route("/admin/usuarios/aprovar/<int:id>")
+@admin_bp.route("/admin/usuarios/aprovar/<int:id>", methods=["POST"])
 @login_required
 @admin_required
 def aprovar_usuario(id):
     UsuarioDAO.aprovar_usuario(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
-@admin_bp.route("/admin/usuarios/recusar/<int:id>")
+@admin_bp.route("/admin/usuarios/recusar/<int:id>", methods=["POST"])
 @login_required
 @admin_required
 def recusar_usuario(id):
@@ -265,7 +269,7 @@ def grafico_filtrado():
 
     from datetime import datetime
 
-    sensores = ["temperatura_ar", "umidade_ar", "umidade_solo", "rad_solar"]
+    sensores = lista_sensores
 
     tipo = request.args.get("tipo")
     data_inicio = request.args.get("data_inicio")
@@ -327,6 +331,8 @@ def pagina_correlacao_clima():
     tipo2 = request.form.get("sensor2")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
+    data_inicio_form = data_inicio
+    data_fim_form = data_fim
 
     if not tipo1 or not tipo2:
         return render_template(
@@ -334,6 +340,10 @@ def pagina_correlacao_clima():
             aviso="Selecione os dois sensores.",
             data_min=data_min,
             data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form,
 
         )
 
@@ -345,7 +355,11 @@ def pagina_correlacao_clima():
             "correlacao/admin/correlacao_clima_admin.html",
             aviso="⚠ Sensores sem dados suficientes.",
             data_min=data_min,
-            data_max=data_max
+            data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form
         )
 
     df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
@@ -371,6 +385,10 @@ def pagina_correlacao_clima():
         correlacao=corre,
         data_min=data_min,
         data_max=data_max,
+        tipo1=tipo1,
+        tipo2=tipo2,
+        data_inicio=data_inicio_form,
+        data_fim=data_fim_form,
 
     )
 

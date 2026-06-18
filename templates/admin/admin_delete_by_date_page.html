@@ -15,7 +15,7 @@
 <body>
 
 
-{% include 'admin/admin_base.html' %}
+{% include 'admin/sidebar.html' %}
 
 <header>
 
@@ -39,7 +39,7 @@
 </div>
 
 <form method="POST"
-      action="/admin/delete_by_date"
+      action="{{ url_for('admin_bp.delete_by_date_page') }}"
       class="filter-form">
 
     <label>Sensor:</label>
@@ -58,8 +58,8 @@
             Umidade do Solo
         </option>
 
-        <option value="radiacao">
-            Radiação
+        <option value="radiacao_uv">
+            Radiação UV
         </option>
 
     </select>

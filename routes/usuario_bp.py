@@ -4,6 +4,8 @@ from dao.leituraDAO import *
 from dao.coletaFrutoDao import ColetaFrutoDAO
 from utils import lista_frutos
 from flask_login import login_user, login_required, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -49,7 +51,9 @@ def cadastro():
             flash("Email já cadastrado")
             return redirect("/")
 
-        UsuarioDAO.cadastrar(nome, email, senha)
+        senha_hash = generate_password_hash(senha)
+
+        UsuarioDAO.cadastrar(nome, email, senha_hash)
         flash("Cadastro realizado. Aguarde aprovação.")
         return redirect("/login")
 

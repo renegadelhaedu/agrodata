@@ -57,7 +57,6 @@ nav ul li a {
     background: red;
     transition: 0.3s;
     font-weight: bold;
-    margin-left:1600px;
 }
 
 nav ul li a:hover {
@@ -189,8 +188,9 @@ footer {
 /* ===== CORREÇÃO FINAL — BOTÃO ADMIN À DIREITA ===== */
 .top-bar {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top:6px;
-    margin-left:94%;
     height:50px;
     padding: 0 15px;
     width: 100%;

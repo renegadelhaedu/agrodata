@@ -14,12 +14,11 @@
 
     <nav>
         <ul>
-            <a href="/painel" class="btn-voltar">⬅️ Voltar ao Menu Principal</a>
+            <li><a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">⬅️ Voltar ao Menu Principal</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='temperatura_ar') }}">🌡️ Temperatura do Ar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_ar') }}">💧 Umidade do Ar</a></li>
             <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='umidade_solo') }}">Umidade do solo</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a></li>
-            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='medida_glicose') }}">Medida de glicose</a></li>
+            <li><a href="{{ url_for('leitura_bp.view_grafico', tipo='radiacao_uv') }}">☀️ Radiação UV</a></li>
         </ul>
     </nav>
 

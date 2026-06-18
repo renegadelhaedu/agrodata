@@ -1,175 +1,41 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
-
 <head>
+    <meta charset="UTF-8">
+    <title>
+        {% block titulo %}
+            AgroData
+        {% endblock %}
+    </title>
 
-```
-<meta charset="UTF-8">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
 
-<title>
-    {% block titulo %}
-        AgroData
+    {% block css_extra %}
     {% endblock %}
-</title>
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/admin.css') }}">
-
-{% block css_extra %}
-{% endblock %}
-```
-
 </head>
 
 <body>
 
-<nav class="sidebar">
-
-```
-<h2 class="menu-title">AgroData</h2>
-
-<!-- CORRELAÇÕES -->
-
-<button class="dropdown-btn">
-    Correlações
-</button>
-
-<div class="dropdown-container">
-
-    <a href="/correlacaoclimaadmin">
-        Clima × Clima
-    </a>
-
-    <a href="/correlacao-fruto-admin">
-        Clima × Fruto
-    </a>
-
-</div>
-
-<!-- ASSOCIAÇÃO -->
-
-<button class="dropdown-btn">
-    Associação de Regras
-</button>
-
-<div class="dropdown-container">
-
-    <a href="/regras/clima">
-        Regras de Clima
-    </a>
-
-    <a href="/regras/frutos">
-        Regras de Frutos
-    </a>
-
-    <a href="/regras/qualidade">
-        Qualidade dos Frutos
-    </a>
-
-    <a href="/regras/riscos">
-        Riscos Agrícolas
-    </a>
-
-</div>
-
-<!-- REGRESSÃO -->
-
-<button class="dropdown-btn">
-    Regressores
-</button>
-
-<div class="dropdown-container">
-
-    <a href="/regressor/linear">
-        Linear Simples
-    </a>
-
-    <a href="/regressor/multipla">
-        Linear Múltipla
-    </a>
-
-    <a href="/regressor/arvore">
-        Árvore de Decisão
-    </a>
-
-    <a href="/regressor/polinomial">
-        Polinomial
-    </a>
-
-</div>
-
-<!-- USUÁRIOS -->
-
-<button class="dropdown-btn">
-    Usuários
-</button>
-
-<div class="dropdown-container">
-
-    <a href="{{ url_for('admin_bp.admin_usuarios') }}">
-        Usuários Ativos
-    </a>
-
-    <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
-        Usuários Pendentes
-    </a>
-
-</div>
-
-<!-- SENSORES -->
-
-<button class="dropdown-btn">
-    Sensores
-</button>
-
-<div class="dropdown-container">
-
-    <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
-        Visualizar Gráfico
-    </a>
-
-    <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
-        Excluir por Data
-    </a>
-
-    <a href="/admin">
-        Sensores Totais
-    </a>
-
-</div>
-
-<a href="{{ url_for('admin_bp.admin_logout') }}">
-    Sair
-</a>
-```
-
-</nav>
+{% include 'admin/sidebar.html' %}
 
 {% block conteudo %}
 {% endblock %}
 
 <script>
+document.querySelectorAll(".dropdown-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+        const container = this.nextElementSibling;
 
-const dropdowns =
-    document.querySelectorAll(".dropdown-btn");
-
-dropdowns.forEach(btn => {
-
-    btn.addEventListener("click", function(){
-
-        this.nextElementSibling
-            .classList.toggle("active");
-
+        if (container) {
+            container.classList.toggle("active");
+        }
     });
-
 });
-
 </script>
 
 {% block js_extra %}
 {% endblock %}
 
 </body>
-
 </html>

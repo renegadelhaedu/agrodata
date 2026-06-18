@@ -15,7 +15,7 @@
 <!-- SIDEBAR -->
 
 
-{% include 'admin/admin_base.html' %}
+{% include 'admin/sidebar.html' %}
 
 <header>
 
@@ -77,6 +77,14 @@
                     Umidade do Solo
                 </option>
 
+                <option value="radiacao_uv"
+                {% if tipo1 == 'radiacao_uv' %}
+                    selected
+                {% endif %}
+                >
+                    Radiação UV
+                </option>
+
             </select>
 
         </div>
@@ -119,6 +127,14 @@
                 {% endif %}
                 >
                     Umidade do Solo
+                </option>
+
+                <option value="radiacao_uv"
+                {% if tipo2 == 'radiacao_uv' %}
+                    selected
+                {% endif %}
+                >
+                    Radiação UV
                 </option>
 
             </select>

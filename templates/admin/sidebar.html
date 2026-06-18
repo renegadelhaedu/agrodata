@@ -1,0 +1,97 @@
+<nav class="sidebar">
+    <h2 class="menu-title">AgroData</h2>
+
+    <button class="dropdown-btn" type="button">
+        Correlações
+    </button>
+
+    <div class="dropdown-container">
+        <a href="{{ url_for('admin_bp.pagina_correlacao_clima') }}">
+            Clima × Clima
+        </a>
+
+        <a href="{{ url_for('admin_bp.pagina_correlacao_fruto') }}">
+            Clima × Fruto
+        </a>
+    </div>
+
+    <button class="dropdown-btn" type="button">
+        Associação de Regras
+    </button>
+
+    <div class="dropdown-container">
+        <a href="{{ url_for('admin_bp.regras_clima') }}">
+            Regras de Clima
+        </a>
+
+        <a href="{{ url_for('admin_bp.regras_frutos') }}">
+            Regras de Frutos
+        </a>
+
+        <a href="{{ url_for('admin_bp.regras_qualidade') }}">
+            Qualidade dos Frutos
+        </a>
+
+        <a href="{{ url_for('admin_bp.regras_risco') }}">
+            Riscos Agrícolas
+        </a>
+    </div>
+
+    <button class="dropdown-btn" type="button">
+        Regressores
+    </button>
+
+    <div class="dropdown-container">
+        <a href="{{ url_for('admin_bp.regressor_linear') }}">
+            Linear Simples
+        </a>
+
+        <a href="{{ url_for('admin_bp.regressor_multipla') }}">
+            Linear Múltipla
+        </a>
+
+        <a href="{{ url_for('admin_bp.regressor_arvore') }}">
+            Árvore de Decisão
+        </a>
+
+        <a href="{{ url_for('admin_bp.regressor_polinomial') }}">
+            Polinomial
+        </a>
+    </div>
+
+    <button class="dropdown-btn" type="button">
+        Usuários
+    </button>
+
+    <div class="dropdown-container">
+        <a href="{{ url_for('admin_bp.admin_usuarios') }}">
+            Usuários Ativos
+        </a>
+
+        <a href="{{ url_for('admin_bp.usuarios_pendentes') }}">
+            Usuários Pendentes
+        </a>
+    </div>
+
+    <button class="dropdown-btn" type="button">
+        Sensores
+    </button>
+
+    <div class="dropdown-container">
+        <a href="{{ url_for('admin_bp.grafico_filtrado') }}">
+            Visualizar Gráfico
+        </a>
+
+        <a href="{{ url_for('admin_bp.delete_by_date_page') }}">
+            Excluir por Data
+        </a>
+
+        <a href="{{ url_for('admin_bp.admin_page') }}">
+            Sensores Totais
+        </a>
+    </div>
+
+    <a href="{{ url_for('admin_bp.admin_logout') }}">
+        Sair
+    </a>
+</nav>

@@ -74,14 +74,13 @@ a {
 }
 /* TOPO: título + botão */
 .top-bar {
-
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    width: 150px;
-    margin-left:60px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    gap: 12px;
 }
 
 /* BOTÃO ADMIN */
@@ -113,5 +112,4 @@ a {
     font-weight: bold;
     transition: 0.3s;
     font-size: 14px;
-    margin-left:1120%;
 }
