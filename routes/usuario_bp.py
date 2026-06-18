@@ -4,6 +4,8 @@ from dao.leituraDAO import *
 from dao.coletaFrutoDao import ColetaFrutoDAO
 from utils import lista_frutos
 from flask_login import login_user, login_required, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -30,8 +32,8 @@ def login():
 
     return render_template("usuario/login_user.html")
 
-@login_required
 @user_bp.route("/painel")
+@login_required
 def painel_usuario():
     leituras = LeituraDAO.listar_todas()
     return render_template("usuario/painel.html", leituras=leituras)
@@ -49,14 +51,16 @@ def cadastro():
             flash("Email já cadastrado")
             return redirect("/")
 
-        UsuarioDAO.cadastrar(nome, email, senha)
+        senha_hash = generate_password_hash(senha)
+
+        UsuarioDAO.cadastrar(nome, email, senha_hash)
         flash("Cadastro realizado. Aguarde aprovação.")
         return redirect("/login")
 
     return render_template("usuario/cadastro.html")
 
-@login_required
 @user_bp.route("/user", methods=["GET"])
+@login_required
 def user_list():
     leituras = LeituraDAO.listar_todas()
     # transforma em dicionários simples para o template
@@ -75,8 +79,8 @@ def logout():
     session.clear()
     return redirect("/")
 
-@login_required
 @user_bp.route("/coleta", methods=["GET", "POST"])
+@login_required
 def cadastrar_coleta():
 
     if request.method == "POST":
@@ -110,8 +114,8 @@ def cadastrar_coleta():
 
     return render_template("usuario/coleta_form.html", frutas=lista_frutos)
 
-@login_required
 @user_bp.route("/minhascoletas")
+@login_required
 def listar_coletas():
 
     print("CURRENT USER:", current_user.id)
@@ -134,8 +138,8 @@ def listar_coletas():
         "usuario/coletas_usuario.html",
         coletas=coletas
     )
-@login_required
 @user_bp.route("/debug/coletas")
+@login_required
 def debug_coletas():
     coletas = ColetaFrutoDAO.listar_todas()
     return "<br>".join([
@@ -144,8 +148,8 @@ def debug_coletas():
     ])
 
 
-@login_required
 @user_bp.route("/coleta/excluir/<int:id_coleta>", methods=["POST"])
+@login_required
 def excluir_coleta(id_coleta):
 
     sucesso = ColetaFrutoDAO.deletar(

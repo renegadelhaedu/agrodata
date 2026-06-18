@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify, render_template, session, redirec
 from flask_login import login_required
 from dao.leituraDAO import LeituraDAO
 from dao.coletaFrutoDao import ColetaFrutoDAO
-from decorators import admin_required
 from grafico import grafico
 from flask_login import current_user
 import plotly.express as px
@@ -36,14 +35,17 @@ def receber_dados_sensores():
 # ===========================
 # GRAFICO ÚNICO
 # ===========================
-@login_required
-@admin_required
 @leitura_bp.route("/grafico/<string:tipo>")
+@login_required
 def view_grafico(tipo):
     leituras = LeituraDAO.get_dados_sensor(tipo) or []
 
     if not leituras:
-        return render_template("grafico.html", aviso=f"⚠ Nenhum dado para '{tipo}'", graphHTML=None)
+        return render_template(
+            "usuario/grafico.html",
+            aviso=f"⚠ Nenhum dado para '{tipo}'",
+            graphHTML=None
+        )
 
     fig = grafico.gerar_graf(leituras, tipo)
     graph_html = fig.to_html(full_html=False)
@@ -56,8 +58,8 @@ def view_grafico(tipo):
 # ===========================
 # CORRELAÇÃO CLIMA x CLIMA — ROTA PRINCIPAL
 # ===========================
-@login_required
 @leitura_bp.route("/correlacaoclima", methods=["GET", "POST"])
+@login_required
 def pagina_correlacao_clima():
 
     from analise.analisador import gerar_correlacao_sensor
@@ -80,6 +82,8 @@ def pagina_correlacao_clima():
     tipo2 = request.form.get("sensor2")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
+    data_inicio_form = data_inicio
+    data_fim_form = data_fim
 
     if not tipo1 or not tipo2:
         return render_template(
@@ -87,6 +91,10 @@ def pagina_correlacao_clima():
             aviso="Selecione os dois sensores.",
             data_min=data_min,
             data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form,
 
         )
 
@@ -98,7 +106,11 @@ def pagina_correlacao_clima():
             "correlacao/usuario/correlacao_clima.html",
             aviso="⚠ Sensores sem dados suficientes.",
             data_min=data_min,
-            data_max=data_max
+            data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form
         )
 
     df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
@@ -124,12 +136,16 @@ def pagina_correlacao_clima():
         correlacao=corre,
         data_min=data_min,
         data_max=data_max,
+        tipo1=tipo1,
+        tipo2=tipo2,
+        data_inicio=data_inicio_form,
+        data_fim=data_fim_form,
 
     )
 
 
-@login_required
 @leitura_bp.route("/correlacao-fruto-usuario", methods=["GET", "POST"])
+@login_required
 def pagina_correlacao_fruto():
 
     frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
@@ -372,9 +388,6 @@ def pagina_correlacao_fruto():
         correlacao=round(correlacao, 4),
         graphHTML=graphHTML
     )
-
-
-
 
 
 

@@ -29,9 +29,9 @@ from analise.regressor import *
 
 admin_bp = Blueprint("admin_bp", __name__)
 
+@admin_bp.route("/admin", methods=["GET"])
 @login_required
 @admin_required
-@admin_bp.route("/admin", methods=["GET"])
 def admin_page():
     leituras = LeituraDAO.listar_todas()
     # transforma em dicionários simples para o template
@@ -42,7 +42,11 @@ def admin_page():
         "valor": getattr(l, "valor", None),
         "timestamp": str(l.timestamp)
     } for l in leituras]
-    return render_template("admin/admin_panel.html", leituras=leituras_data)
+    return render_template(
+        "admin/admin_panel.html",
+        leituras=leituras_data,
+        sensores=lista_sensores
+    )
 
 
 
@@ -70,14 +74,16 @@ def admin_login():
 
 # Logout
 @admin_bp.route("/admin/logout")
+@login_required
+@admin_required
 def admin_logout():
     logout_user()
     flash("Logout efetuado.", "info")
     return redirect(url_for("home"))
 
+@admin_bp.route("/admin/delete", methods=["POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/delete", methods=["POST"])
 def admin_delete():
     sensor = request.form.get("sensor")
     data_inicio = request.form.get("data_inicio")
@@ -117,9 +123,9 @@ def admin_delete():
     flash(f"{len(leituras)} leituras do sensor '{sensor}' foram removidas.", "success")
     return redirect(url_for("admin_bp.admin_page"))
 
+@admin_bp.route("/admin/delete/<int:id>", methods=["POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/delete/<int:id>", methods=["POST"])
 def admin_delete_by_id(id):
     leitura = Leitura.query.get(id)
 
@@ -134,9 +140,9 @@ def admin_delete_by_id(id):
     return redirect(url_for("admin_bp.admin_page"))
 
 
+@admin_bp.route("/admin/delete_by_date", methods=["GET", "POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/delete_by_date", methods=["GET", "POST"])
 def delete_by_date_page():
 
     if request.method == "POST":
@@ -162,44 +168,44 @@ def delete_by_date_page():
     )
 
 
+@admin_bp.route("/admin/usuarios/delete/<int:id>", methods=["POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/usuarios/delete/<int:id>", methods=["POST"])
 def admin_delete_usuario(id):
     UsuarioDAO.deletar(id)
     return redirect(url_for("admin_bp.admin_usuarios"))
 
+@admin_bp.route("/admin/usuarios")
 @login_required
 @admin_required
-@admin_bp.route("/admin/usuarios")
 def admin_usuarios():
     usuarios = UsuarioDAO.listar_aprovados()  # 🔥 aqui
     return render_template("admin/admin_usuarios.html", usuarios=usuarios)
 
+@admin_bp.route("/admin/usuarios/pendentes")
 @login_required
 @admin_required
-@admin_bp.route("/admin/usuarios/pendentes")
 def usuarios_pendentes():
     usuarios = UsuarioDAO.listar_pendentes()
     return render_template("admin/admin_pendentes.html", usuarios=usuarios)
 
+@admin_bp.route("/admin/usuarios/aprovar/<int:id>", methods=["POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/usuarios/aprovar/<int:id>")
 def aprovar_usuario(id):
     UsuarioDAO.aprovar_usuario(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
+@admin_bp.route("/admin/usuarios/recusar/<int:id>", methods=["POST"])
 @login_required
 @admin_required
-@admin_bp.route("/admin/usuarios/recusar/<int:id>")
 def recusar_usuario(id):
     UsuarioDAO.deletar(id)
     return redirect(url_for("admin_bp.usuarios_pendentes"))
 
+@admin_bp.route("/filtrar", methods=["GET"])
 @login_required
 @admin_required
-@admin_bp.route("/filtrar", methods=["GET"])
 def filtrar_leituras():
 
     sensor_id = request.args.get("sensor_id")
@@ -256,14 +262,14 @@ def filtrar_leituras():
     )
 
 
+@admin_bp.route("/grafico-filtrado", methods=["GET"])
 @login_required
 @admin_required
-@admin_bp.route("/grafico-filtrado", methods=["GET"])
 def grafico_filtrado():
 
     from datetime import datetime
 
-    sensores = ["temperatura_ar", "umidade_ar", "umidade_solo", "rad_solar"]
+    sensores = lista_sensores
 
     tipo = request.args.get("tipo")
     data_inicio = request.args.get("data_inicio")
@@ -300,9 +306,9 @@ def grafico_filtrado():
         aviso=aviso
     )
 
+@admin_bp.route("/correlacaoclimaadmin", methods=["GET", "POST"])
 @login_required
 @admin_required
-@admin_bp.route("/correlacaoclimaadmin", methods=["GET", "POST"])
 def pagina_correlacao_clima():
 
     from analise.analisador import gerar_correlacao_sensor
@@ -325,6 +331,8 @@ def pagina_correlacao_clima():
     tipo2 = request.form.get("sensor2")
     data_inicio = request.form.get("data_inicio")
     data_fim = request.form.get("data_fim")
+    data_inicio_form = data_inicio
+    data_fim_form = data_fim
 
     if not tipo1 or not tipo2:
         return render_template(
@@ -332,6 +340,10 @@ def pagina_correlacao_clima():
             aviso="Selecione os dois sensores.",
             data_min=data_min,
             data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form,
 
         )
 
@@ -343,7 +355,11 @@ def pagina_correlacao_clima():
             "correlacao/admin/correlacao_clima_admin.html",
             aviso="⚠ Sensores sem dados suficientes.",
             data_min=data_min,
-            data_max=data_max
+            data_max=data_max,
+            tipo1=tipo1,
+            tipo2=tipo2,
+            data_inicio=data_inicio_form,
+            data_fim=data_fim_form
         )
 
     df1 = pd.DataFrame([{"valor": l.getValor(), "timestamp": l.getTimestamp()} for l in leituras1])
@@ -369,12 +385,16 @@ def pagina_correlacao_clima():
         correlacao=corre,
         data_min=data_min,
         data_max=data_max,
+        tipo1=tipo1,
+        tipo2=tipo2,
+        data_inicio=data_inicio_form,
+        data_fim=data_fim_form,
 
     )
 
-@admin_required
 @admin_bp.route("/correlacao-fruto-admin", methods=["GET", "POST"])
 @login_required
+@admin_required
 def pagina_correlacao_fruto():
 
     frutos = ColetaFrutoDAO.listar_frutos_unicos(current_user.id)
@@ -620,9 +640,9 @@ def pagina_correlacao_fruto():
 
 #associacoes de regras
 
+@admin_bp.route("/regras/frutos")
 @login_required
 @admin_required
-@admin_bp.route("/regras/frutos")
 def regras_frutos():
 
     regras = gerar_regras_frutos()
@@ -633,9 +653,9 @@ def regras_frutos():
     )
 
 
+@admin_bp.route("/regras/clima")
 @login_required
 @admin_required
-@admin_bp.route("/regras/clima")
 def regras_clima():
 
     regras = gerar_regras_clima()
@@ -646,9 +666,9 @@ def regras_clima():
     )
 
 
+@admin_bp.route("/regras/qualidade")
 @login_required
 @admin_required
-@admin_bp.route("/regras/qualidade")
 def regras_qualidade():
 
     regras = gerar_regras_qualidade()
@@ -659,9 +679,9 @@ def regras_qualidade():
     )
 
 
+@admin_bp.route("/regras/riscos")
 @login_required
 @admin_required
-@admin_bp.route("/regras/riscos")
 def regras_risco():
 
     regras = gerar_regras_risco()
@@ -675,9 +695,9 @@ def regras_risco():
 
 #regressao
 
+@admin_bp.route("/regressor/linear")
 @login_required
 @admin_required
-@admin_bp.route("/regressor/linear")
 def regressor_linear():
 
     resultado = regressao_linear_simples()
@@ -688,9 +708,9 @@ def regressor_linear():
     )
 
 
+@admin_bp.route("/regressor/multipla")
 @login_required
 @admin_required
-@admin_bp.route("/regressor/multipla")
 def regressor_multipla():
 
     resultado = regressao_linear_multipla()
@@ -701,9 +721,9 @@ def regressor_multipla():
     )
 
 
+@admin_bp.route("/regressor/arvore")
 @login_required
 @admin_required
-@admin_bp.route("/regressor/arvore")
 def regressor_arvore():
 
     resultado = regressao_arvore()
@@ -714,9 +734,9 @@ def regressor_arvore():
     )
 
 
+@admin_bp.route("/regressor/polinomial")
 @login_required
 @admin_required
-@admin_bp.route("/regressor/polinomial")
 def regressor_polinomial():
 
     resultado = regressao_polinomial()

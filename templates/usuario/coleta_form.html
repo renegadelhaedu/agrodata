@@ -13,13 +13,13 @@
 
 <nav>
     <ul>
-        <li><a href="/painel" class="btn-voltar">⬅ Voltar ao Painel</a></li>
+        <li><a href="{{ url_for('user_bp.painel_usuario') }}" class="btn-voltar">⬅ Voltar ao Painel</a></li>
     </ul>
 </nav>
 
 <main>
 
-<form action="/coleta" method="POST" class="form-coleta">
+<form action="{{ url_for('user_bp.cadastrar_coleta') }}" method="POST" class="form-coleta">
 
     <label>Fruto coletado:</label>
     <select name="nome_fruto">

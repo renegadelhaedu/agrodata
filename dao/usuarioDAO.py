@@ -1,5 +1,6 @@
 from banco import db
 from modelo.usuario import Usuario
+from werkzeug.security import check_password_hash
 
 
 class UsuarioDAO:
@@ -35,7 +36,12 @@ class UsuarioDAO:
     # =========================
     @staticmethod
     def autenticar(email, senha):
-        return Usuario.query.filter_by(email=email, senha=senha).first()
+        usuario = Usuario.query.filter_by(email=email).first()
+
+        if usuario and check_password_hash(usuario.senha, senha):
+            return usuario
+
+        return None
 
     # =========================
     # LISTAGENS
