@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Painel do Usuário</title>
-    <link rel="stylesheet" href="/static/css/painel.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
 </head>
 <body>
 
@@ -12,7 +12,7 @@
 
 <nav>
     <ul>
-        <li><a href="/painel">⬅ Voltar ao Painel</a></li>
+        <li><a href="{{ url_for('user_bp.painel_usuario') }}">⬅ Voltar ao Painel</a></li>
 
     </ul>
 </nav>

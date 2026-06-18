@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from routes.admin_bp import *
 from routes.leitura_bp import leitura_bp
@@ -11,7 +12,6 @@ from config import login_manager
 from utils import TipoSensor, TipoFruta
 from banco import db
 from modelo.coletaFruto import ColetaFruto
-
 
 app = Flask(__name__)
 app.config.from_object(Config)

@@ -1,6 +1,21 @@
-from werkzeug.security import generate_password_hash
+import os
+
 from flask_login import LoginManager
+from werkzeug.security import generate_password_hash
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+if load_dotenv:
+    load_dotenv()
+
 login_manager = LoginManager()
+
+
+def obter_hash_admin(nome_variavel, valor_padrao):
+    return os.getenv(nome_variavel) or generate_password_hash(valor_padrao)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -21,9 +36,9 @@ def load_user(user_id):
 
 
 class Config:
-    SECRET_KEY = "agrodata2025"
+    SECRET_KEY = os.getenv("SECRET_KEY", "agrodata2025")
     SQLALCHEMY_DATABASE_URI = "sqlite:///iot_data.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    ADMIN_USER_HASH = generate_password_hash("admin")
-    ADMIN_PASSWORD_HASH = generate_password_hash("1234")
+    ADMIN_USER_HASH = obter_hash_admin("ADMIN_USER_HASH", "admin")
+    ADMIN_PASSWORD_HASH = obter_hash_admin("ADMIN_PASSWORD_HASH", "1234")

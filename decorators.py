@@ -8,7 +8,7 @@ def admin_required(f):
         if not current_user.is_authenticated:
             return redirect(url_for('home'))
 
-        if not current_user.is_professor:
+        if not current_user.is_admin:
             logout_user()
             return redirect(url_for('home'))
 

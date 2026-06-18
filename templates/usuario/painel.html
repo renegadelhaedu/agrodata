@@ -13,11 +13,6 @@
     <h1>AgroData - Monitoramento IoT</h1>
     <p>Projeto de monitoramento de solo e clima com sensores IoT no IFPB - Sousa</p>
 
-    <nav>
-    <ul>
-        <li><a href="{{ url_for('user_bp.logout') }}">Sair</a></li>
-    </ul>
-    </nav>
 </header>
 
 <div class="top-bar">
@@ -53,7 +48,7 @@
         </li>
 
         <li>
-            <a href="{{ url_for('leitura_bp.view_grafico', tipo='rad_solar') }}">☀️ Radiação Solar</a>
+            <a href="{{ url_for('leitura_bp.view_grafico', tipo='radiacao_uv') }}">☀️ Radiação UV</a>
 
         </li>
 
@@ -97,6 +92,17 @@
         <ul class="submenu">
             <li>
               <a href="{{ url_for('user_bp.user_list') }}">Sensores</a>
+            </li>
+
+
+        </ul>
+
+        <li class="categoria">SAIR</li>
+
+        
+        <ul class="submenu">
+            <li>
+              <a href="{{ url_for('user_bp.logout') }}">Sair</a>
             </li>
 
 

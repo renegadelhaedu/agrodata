@@ -15,7 +15,7 @@
 <body>
 
 
-{% include 'admin/admin_base.html' %}
+{% include 'admin/sidebar.html' %}
 
 <header>
 
@@ -60,20 +60,24 @@
 
         <td>
 
-            <a class="btn-approve"
-               href="{{ url_for('admin_bp.aprovar_usuario', id=u.id) }}">
+            <div class="actions-inline">
+                <form method="POST"
+                      action="{{ url_for('admin_bp.aprovar_usuario', id=u.id) }}">
+                    <button type="submit"
+                            class="btn-approve">
+                        Aprovar
+                    </button>
+                </form>
 
-                Aprovar
-
-            </a>
-
-            <a class="btn-delete"
-               href="{{ url_for('admin_bp.recusar_usuario', id=u.id) }}"
-               onclick="return confirm('Deseja recusar este usuário?')">
-
-                Recusar
-
-            </a>
+                <form method="POST"
+                      action="{{ url_for('admin_bp.recusar_usuario', id=u.id) }}"
+                      onsubmit="return confirm('Deseja recusar este usuário?')">
+                    <button type="submit"
+                            class="btn-delete">
+                        Recusar
+                    </button>
+                </form>
+            </div>
 
         </td>
 

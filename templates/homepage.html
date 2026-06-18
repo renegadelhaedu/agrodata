@@ -15,7 +15,7 @@
 </header>
 
 <div class="top-bar">
-
+    <button id="menu-btn" class="menu-btn">☰ Menu</button>
 
     <a class="btn-admin" href="{{ url_for('user_bp.login') }}">
         Login
@@ -33,33 +33,29 @@
         <!-- ===========================
             SENSOR CLIMA
         ============================ -->
-        <li class="categoria">Falta incluir páginas estáticas</li>
+        <li class="categoria">Navegação</li>
 
         <li>
-            <a href="">...teste 1</a>
-
+            <a href="#sobre">Sobre o Projeto</a>
         </li>
 
         <li>
-            <a href="">...teste 1</a>
-
+            <a href="{{ url_for('user_bp.login') }}">Login do Usuário</a>
         </li>
 
         <li>
-            <a href="">...teste 1</a>
-
+            <a href="{{ url_for('user_bp.cadastro') }}">Cadastro</a>
         </li>
 
         <li>
-            <a href="">...teste 1</a>
-
+            <a href="{{ url_for('admin_bp.admin_login') }}">Área Admin</a>
         </li>
 
     </ul>
 </div>
 
 <main>
-    <section class="descricao">
+    <section class="descricao" id="sobre">
         <h2>Sobre o Projeto</h2>
         <p>
             O sistema AgroData foi desenvolvido para monitorar, em tempo real, variáveis de solo e clima
