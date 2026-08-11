@@ -21,8 +21,9 @@ def receber_dados_sensores():
     print(temperatura_ar)
     print(umidade_solo)
     print(uv)
-    LeituraDAO.salvar(sensor_id=1,tipo='umidade_ar', valor=umidade_ar)
-    LeituraDAO.salvar(sensor_id=2, tipo='temperatura_ar', valor=temperatura_ar)
+
+    LeituraDAO.salvar(sensor_id=1, tipo='temperatura_ar', valor=temperatura_ar)
+    LeituraDAO.salvar(sensor_id=2,tipo='umidade_ar', valor=umidade_ar)
     LeituraDAO.salvar(sensor_id=3, tipo='umidade_solo', valor=umidade_solo)
     LeituraDAO.salvar(sensor_id=4, tipo='radiacao_uv', valor=uv)
 

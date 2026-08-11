@@ -15,7 +15,7 @@
 </header>
 
 <div class="top-bar">
-    <button id="menu-btn" class="menu-btn">☰ Menu</button>
+    <button id="menu-btn" class="menu-btn"></button>
 
     <a class="btn-admin" href="{{ url_for('user_bp.login') }}">
         Login
@@ -25,34 +25,6 @@
 
 
 
-<div id="sidebar" class="sidebar">
-    <a href="javascript:void(0)" class="close-btn" id="close-btn">&times;</a>
-
-    <ul>
-
-        <!-- ===========================
-            SENSOR CLIMA
-        ============================ -->
-        <li class="categoria">Navegação</li>
-
-        <li>
-            <a href="#sobre">Sobre o Projeto</a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('user_bp.login') }}">Login do Usuário</a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('user_bp.cadastro') }}">Cadastro</a>
-        </li>
-
-        <li>
-            <a href="{{ url_for('admin_bp.admin_login') }}">Área Admin</a>
-        </li>
-
-    </ul>
-</div>
 
 <main>
     <section class="descricao" id="sobre">

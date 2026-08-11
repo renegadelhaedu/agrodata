@@ -91,16 +91,7 @@ footer {
 }
 
 /* ======= SIDEBAR ======= */
-.menu-btn {
-    font-size: 20px;
-    padding: 10px 15px;
-    background-color: #036635;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 6px;
-    margin: 10px;
-}
+
 
 .menu-btn:hover {
     background-color: #02b252;
